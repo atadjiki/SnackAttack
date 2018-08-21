@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace SnackAttack
 {
@@ -11,10 +12,18 @@ namespace SnackAttack
     public class Game1 : Game
     {
         //ball stuff
-        Texture2D textureBall;
-        Vector2 ballPosition;
-        public float ballSpeed;
+       // Texture2D textureBall;
+       // Texture2D textureBall2;
+        Vector2 headPosition;
+        public float snakeSpeed;
 
+        int snakeLength = 4; // amnount of snake nodes. keep in mind there is always a head node and tail node.
+ 
+        float xIncrement = 25;
+        float yIncrement = 25;
+
+        List<Texture2D> snakeList;
+        List<Vector2> positions;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -36,8 +45,30 @@ namespace SnackAttack
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            ballPosition = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
-            ballSpeed = 100f;
+            snakeList = new List<Texture2D>();
+            positions = new List<Vector2>();
+
+            //initialize all positions
+            headPosition = new Vector2(graphics.PreferredBackBufferWidth / 2, graphics.PreferredBackBufferHeight / 2);
+            //add and increment offsets in loop
+
+            float initialX = graphics.PreferredBackBufferWidth / 2;
+            float initialY = graphics.PreferredBackBufferHeight / 2;
+
+            float xOffset = 0;
+            float yOffset = 0;
+
+
+            for (int i = 0; i < snakeLength; i++)
+            {
+                positions.Add(new Vector2(initialX + xOffset, initialY + yOffset));
+                xOffset += xIncrement;
+               
+            }
+
+
+
+            snakeSpeed = 100f;
 
             base.Initialize();
         }
@@ -52,7 +83,20 @@ namespace SnackAttack
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            textureBall = Content.Load<Texture2D>("ball");
+
+
+            //add snake head
+            snakeList.Add(Content.Load<Texture2D>("ball"));
+
+            //add snake body
+            for (int i = 1; i < snakeLength-1; i++)
+            {
+                snakeList.Add(Content.Load <Texture2D>("ball"));
+            }
+
+            //add snake tail
+            snakeList.Add(Content.Load<Texture2D>("ball"));
+
         }
 
         /// <summary>
@@ -74,23 +118,46 @@ namespace SnackAttack
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            float xOffset = 0;
+            float yOffset = 0;
+
             // TODO: Add your update logic here
-            var kstate = Keyboard.GetState();
+         
+            
 
-            if (kstate.IsKeyDown(Keys.Up))
-                ballPosition.Y -= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            // loop through list, set positions for all nodes while incrementing positions
+            for (int i = 0; i < snakeLength; i++)
+            {
 
-            if (kstate.IsKeyDown(Keys.Down))
-                ballPosition.Y += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                //set position
+                Vector2 temp = positions[i];
 
-            if (kstate.IsKeyDown(Keys.Left))
-                ballPosition.X -= ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                var kstate = Keyboard.GetState();
 
-            if (kstate.IsKeyDown(Keys.Right))
-                ballPosition.X += ballSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (kstate.IsKeyDown(Keys.Up))
+                    temp.Y -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            ballPosition.X = Math.Min(Math.Max(textureBall.Width / 2, ballPosition.X), graphics.PreferredBackBufferWidth - textureBall.Width / 2);
-            ballPosition.Y = Math.Min(Math.Max(textureBall.Height / 2, ballPosition.Y), graphics.PreferredBackBufferHeight - textureBall.Height / 2);
+                if (kstate.IsKeyDown(Keys.Down))
+                    temp.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (kstate.IsKeyDown(Keys.Left))
+                    temp.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                if (kstate.IsKeyDown(Keys.Right))
+                    temp.X += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                temp.X = Math.Min(Math.Max(snakeList[i].Width / 2, temp.X), graphics.PreferredBackBufferWidth - snakeList[i].Width / 2);
+                temp.Y = Math.Min(Math.Max(snakeList[i].Height / 2, temp.Y), graphics.PreferredBackBufferHeight - snakeList[i].Height / 2);
+                positions[i] = temp;
+
+
+                //increment position
+                xOffset += xIncrement;
+                yOffset += yIncrement;
+                
+
+
+            }
 
             base.Update(gameTime);
 
@@ -106,10 +173,17 @@ namespace SnackAttack
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-        
-            spriteBatch.
-                Draw(textureBall,ballPosition,null,Color.White,0f,new Vector2(textureBall.Width / 2, textureBall.Height / 2),Vector2.One,SpriteEffects.None,0f);
+
+            for (int i = 0; i < snakeLength; i++)
+            {
+
+                spriteBatch.
+                Draw(snakeList[i], positions[i], null, Color.White, 0f, new Vector2(snakeList[i].Width / 2, snakeList[0].Height / 2), Vector2.One, SpriteEffects.None, 0f);
+            }
+            
             spriteBatch.End();
+
+            //headPosition.X += 50;
 
 
             base.Draw(gameTime);
