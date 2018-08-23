@@ -13,11 +13,13 @@ namespace SnackAttack.Desktop
         int snakeLength; // amnount of snake nodes, including head
         int spacing; //track every nth head positions (0 will look really mushed)
         int collisionModifier = 10;
+        int wiggleModifier = 1;
+        int tailWiggleModifier = 10;
+        bool up = false, down = false, left = false, right = false;
 
         Queue<Vector2> previousPositions;
         List<Texture2D> snakeBody;
         List<Vector2> positions;
-
         BoundingBox headBox = new BoundingBox();
 
         public Snake(float initialX, float initialY)
@@ -42,9 +44,10 @@ namespace SnackAttack.Desktop
 
         }
 
-        public void loadSnake(Texture2D head, Texture2D body, Texture2D tail){
+        public void loadSnake(Texture2D head, Texture2D body, Texture2D tail)
+        {
             //add snake head
-            
+
             snakeBody.Add(head);
 
             //add snake body
@@ -62,63 +65,101 @@ namespace SnackAttack.Desktop
 
             UpdateBoundingBox();
             var head = positions[0];
-
-            bool up = false, down = false, left = false, right = false;
-
+            var lastPreviousPosition = head;
 
             //store previous head position in queue
             if (previousPositions.Count == snakeLength * spacing)
             {
                 previousPositions.Dequeue();
             }
-            previousPositions.Enqueue(positions[0]);
+            //add offsets here
+            if (up || down)
+            {
+                lastPreviousPosition.X += (float)new Random().Next(-wiggleModifier, wiggleModifier);
+            }
+            else if (left || right)
+            {
+                lastPreviousPosition.Y += (float)new Random().Next(-wiggleModifier, wiggleModifier);
+            }
+            previousPositions.Enqueue(lastPreviousPosition);
 
+            //tweak tail nodes
+            int tailLength = previousPositions.Count / 5;
+            if (tailLength >= 1)
+            {
+                //get last tailLength nodes
+                List<Vector2> tail = new List<Vector2>();
+                if (previousPositions.Count > tailLength)
+                {
+                    while (tailLength > 0)
+                    {
+
+                        var tailNode = previousPositions.ToArray()[previousPositions.Count - tailLength];
+                        if (up || down)
+                        {
+                            tailNode.X += (float)new Random().Next(-tailWiggleModifier, tailWiggleModifier);
+                        }
+                        else if (left || right)
+                        {
+                            tailNode.Y += (float)new Random().Next(-tailWiggleModifier, tailWiggleModifier);
+                        }
+
+                        tailLength--;
+                    }
+                }
+            }
 
             //move head first
 
             if (kstate.IsKeyDown(Keys.Up))
             {
                 head.Y -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                up = true;
+                up = true; down = false; left = false; right = false;
             }
 
             if (kstate.IsKeyDown(Keys.Down))
             {
                 head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                down = true;
+                up = false; down = true; left = false; right = false;
             }
 
 
             if (kstate.IsKeyDown(Keys.Left))
             {
                 head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                left = true;
+                up = false; down = false; left = true; right = false;
             }
 
             if (kstate.IsKeyDown(Keys.Right))
             {
                 head.X += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                right = true;
+                up = false; down = false; left = false; right = true;
             }
 
-            // head.X = Math.Min(Math.Max(snakeBody[0].Width / 2, head.X), graphics.PreferredBackBufferWidth - snakeBody[0].Width / 2);
-            // head.Y = Math.Min(Math.Max(snakeBody[0].Height / 2, head.Y), graphics.PreferredBackBufferHeight - snakeBody[0].Height / 2);
+            head.X = Math.Min(Math.Max(snakeBody[0].Width / 2, head.X), graphics.PreferredBackBufferWidth - snakeBody[0].Width / 2);
+            head.Y = Math.Min(Math.Max(snakeBody[0].Height / 2, head.Y), graphics.PreferredBackBufferHeight - snakeBody[0].Height / 2);
 
             //check collision, if this move is allowed, store the position - if not, stay where we are!
-            if (headBox.Intersects(obstacleBox)){
+            if (headBox.Intersects(obstacleBox))
+            {
                 Console.WriteLine("Intersection! at :" + headBox.Max + "," + obstacleBox.Max);
 
-                if(up){
+                if (up)
+                {
                     head.Y += collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                } else if (down){
+                }
+                else if (down)
+                {
                     head.Y -= collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                } else if (left){
+                }
+                else if (left)
+                {
                     head.X += collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                } else if(right){
+                }
+                else if (right)
+                {
                     head.X -= collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                 }
-
-
             }
 
 
@@ -137,13 +178,17 @@ namespace SnackAttack.Desktop
                 }
 
 
+                //do NOT offset snake here!
+
+
                 //store back in list
                 positions[i] = temp;
 
             }
         }
 
-        public void DrawSnake(SpriteBatch spriteBatch){
+        public void DrawSnake(SpriteBatch spriteBatch)
+        {
             //draw all snake nodes
             for (int i = 0; i < snakeLength; i++)
             {
