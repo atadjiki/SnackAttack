@@ -10,9 +10,11 @@ namespace SnackAttack.Desktop
     {
         //constants
         float snakeSpeed;
+
         int snakeLength; // amnount of snake nodes, including head
         int spacing; //track every nth head positions (0 will look really mushed)
         int collisionModifier = 10;
+
         bool up = false, down = false, left = false, right = false;
         bool noKeyPressed = true;
         bool tailMoving = false;
@@ -27,8 +29,9 @@ namespace SnackAttack.Desktop
         public Snake(float initialX, float initialY)
         {
             snakeSpeed = 100f;
-            snakeLength = 2;
+            snakeLength = 5;
             spacing = 25;
+
 
             snakeBody = new List<Texture2D>(snakeLength);
             positions = new List<Vector2>(snakeLength);
@@ -53,7 +56,7 @@ namespace SnackAttack.Desktop
             snakeBody.Add(head);
 
             //add snake body
-            for (int i = 0; i < snakeLength; i++)
+            for (int i = 1; i < snakeLength-1; i++)
             {
                 snakeBody.Add(body);
             }
@@ -68,6 +71,7 @@ namespace SnackAttack.Desktop
             UpdateBoundingBox();
             noKeyPressed = true;
 
+
             //the snake shouldnt move if no key is being pressed
             //also, depending on what key is pressed the head is either the first or last node
             //and the previous positions list should be reversed if moving the tail
@@ -77,11 +81,10 @@ namespace SnackAttack.Desktop
 
                 //if moving tail, reverse the previousposition queue if switching from front of snake
                 if (!tailMoving){
-                    // previousPositions.Reverse();
-                    positions.Reverse();
-                    // previousPositions.Clear();
-                   // previousPositions.Reverse();
 
+                    positions.Reverse();
+                    repopulatePreviousPositions();
+                    snakeBody.Reverse();
                 }
                     
 
@@ -92,11 +95,10 @@ namespace SnackAttack.Desktop
             {
 
                 if (tailMoving){
-                    //  previousPositions.Reverse();
-                   // previousPositions.Clear();
+                   
                     positions.Reverse();
-                  //  previousPositions.Reverse();
-
+                    repopulatePreviousPositions();
+                    snakeBody.Reverse();
                 }
                     
                 tailMoving = false;
@@ -181,12 +183,6 @@ namespace SnackAttack.Desktop
                     }
                 }
 
-                //store previous head position in queue
-                if (previousPositions.Count == snakeLength * spacing)
-                {
-              //      previousPositions.RemoveAt(snakeLength - 1);
-                }
-
                 previousPositions.Insert(0, lastPreviousPosition);
 
                 head.X = Math.Min(Math.Max(snakeBody[0].Width / 2, head.X), graphics.PreferredBackBufferWidth - snakeBody[0].Width / 2);
@@ -215,7 +211,6 @@ namespace SnackAttack.Desktop
                     }
                 }
 
-
                 positions[0] = head;
 
                 // loop through list, set positions for all nodes while incrementing positions
@@ -225,18 +220,17 @@ namespace SnackAttack.Desktop
                     //set position
                     Vector2 temp = positions[i];
 
-                    if (previousPositions.Count != 0 && previousPositions.ToArray().Length > i * spacing)
+                    if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
                     {
                         temp = previousPositions.ToArray()[i * spacing];
                     }
+                    
 
 
                     //store back in list
                     positions[i] = temp;
 
                 }
-
-
             }
 
         }
@@ -244,12 +238,15 @@ namespace SnackAttack.Desktop
         public void DrawSnake(SpriteBatch spriteBatch)
         {
             //draw all snake nodes
+   
+
             for (int i = 0; i < snakeLength; i++)
             {
 
                 spriteBatch.
-                Draw(snakeBody[i], positions[i], null, Color.White, 0f, new Vector2(snakeBody[i].Width / 2, snakeBody[0].Height / 2), Vector2.One, SpriteEffects.None, 0f);
+                Draw(snakeBody[i], positions[i], null, Color.White, 0f, new Vector2(snakeBody[i].Width / 2, snakeBody[i].Height / 2), Vector2.One, SpriteEffects.None, 0f);
             }
+
         }
 
         //keeps track of snake head bounding box
@@ -259,6 +256,36 @@ namespace SnackAttack.Desktop
             this.headBox.Min.Y = positions[0].Y;
             this.headBox.Max.X = positions[0].X + snakeBody[0].Width;
             this.headBox.Max.Y = positions[0].Y + snakeBody[0].Height;
+        }
+
+        private void repopulatePreviousPositions(){
+
+
+
+            if(previousPositions.Count >= positions.Count * spacing)
+                previousPositions = previousPositions.GetRange(0, positions.Count * spacing);
+
+            previousPositions.Reverse();
+
+            for (int i = 0; i < positions.Count; i++)
+            {
+
+                //set position
+                Vector2 temp = positions[i];
+
+                if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
+                {
+                    temp = previousPositions.ToArray()[i * spacing];
+                }
+
+
+
+                //store back in list
+                positions[i] = temp;
+
+            }
+
+
         }
     }
 

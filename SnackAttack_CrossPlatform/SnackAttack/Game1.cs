@@ -67,9 +67,9 @@ namespace SnackAttack
             // TODO: use this.Content to load your game content here
 
             //load snake assets
-            snake.loadSnake(Content.Load<Texture2D>("ball"), Content.Load<Texture2D>("ball"), Content.Load<Texture2D>("ball"));
+            snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
-            obstacle = Content.Load<Texture2D>("ball");
+           // obstacle = Content.Load<Texture2D>("ball");
 
 
 
@@ -92,6 +92,9 @@ namespace SnackAttack
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
+           
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
@@ -115,17 +118,19 @@ namespace SnackAttack
         {
             GraphicsDevice.Clear(backgroundColor);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
+
+            // TODO: Add your drawing code here
+
 
             snake.DrawSnake(spriteBatch);
 
-            spriteBatch.
-                       Draw(obstacle, obstaclePos, null, Color.White, 0f, 
-                            new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-        
+            //spriteBatch.
+            //Draw(obstacle, obstaclePos, null, Color.White, 0f, 
+            //new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
 
-        spriteBatch.End();
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
@@ -133,10 +138,10 @@ namespace SnackAttack
         //keeps track of snake head bounding box
         protected void UpdateBoundingBox()
         {
-            this.obstacleBox.Min.X = obstaclePos.X;
-            this.obstacleBox.Min.Y = obstaclePos.Y;
-            this.obstacleBox.Max.X = obstaclePos.X + obstacle.Width;
-            this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
+            //this.obstacleBox.Min.X = obstaclePos.X;
+            //this.obstacleBox.Min.Y = obstaclePos.Y;
+            //this.obstacleBox.Max.X = obstaclePos.X + obstacle.Width;
+            //this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
         }
 
     }
