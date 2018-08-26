@@ -10,12 +10,13 @@ namespace SnackAttack.Desktop
     {
         //constants
         float snakeSpeed;
+        float maxSpeed;
 
         int snakeLength; // maximum amnount of snake nodes, including head
         int maxLength;
-        int minLength;
+     //   int minLength;
         int spacing; //track every nth head positions (0 will look really mushed)
-        int collisionModifier = 10;
+        int collisionModifier = 100;
 
 
         bool up = false, down = false, left = false, right = false;
@@ -37,9 +38,10 @@ namespace SnackAttack.Desktop
         public Snake(float initialX, float initialY)
         {
             snakeSpeed = 100f;
+            maxSpeed = snakeSpeed;
             snakeLength = 2; //must always have at least a head and tail!
-            maxLength = 16;
-            minLength = 2;
+            maxLength = 5;
+            //minLength = 2;
             spacing = 25;
 
 
@@ -72,6 +74,10 @@ namespace SnackAttack.Desktop
 
         }
 
+        public Vector2 getHeadPosition(){
+            return positions[0];
+        }
+
         public void loadSnake(Texture2D head, Texture2D body, Texture2D tail)
         {
             //add snake head
@@ -91,6 +97,7 @@ namespace SnackAttack.Desktop
 
             UpdateBoundingBox();
             noKeyPressed = true;
+            coilMode = false;
 
 
             //the snake shouldnt move if no key is being pressed
@@ -125,7 +132,9 @@ namespace SnackAttack.Desktop
                 tailMoving = false;
                 noKeyPressed = false;
             }
-
+            else if(kstate.IsKeyDown(Keys.LeftShift) || kstate.IsKeyDown(Keys.LeftShift)){
+                coilMode = true;
+            }
             if (noKeyPressed && !coilMode)
                 return;
 
@@ -149,7 +158,7 @@ namespace SnackAttack.Desktop
                         noKeyPressed = false;
                     }
 
-                    if (kstate.IsKeyDown(Keys.Down))
+                    else if (kstate.IsKeyDown(Keys.Down))
                     {
                         head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                         up = false; down = true; left = false; right = false;
@@ -157,20 +166,19 @@ namespace SnackAttack.Desktop
                     }
 
 
-                    if (kstate.IsKeyDown(Keys.Left))
+                    else if (kstate.IsKeyDown(Keys.Left))
                     {
                         head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                         up = false; down = false; left = true; right = false;
                         noKeyPressed = false;
                     }
 
-                    if (kstate.IsKeyDown(Keys.Right))
+                    else if (kstate.IsKeyDown(Keys.Right))
                     {
                         head.X += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                         up = false; down = false; left = false; right = true;
                         noKeyPressed = false;
                     }
-
 
                 }
 
@@ -184,7 +192,7 @@ namespace SnackAttack.Desktop
                         noKeyPressed = false;
                     }
 
-                    if (kstate.IsKeyDown(Keys.S))
+                    else if (kstate.IsKeyDown(Keys.S))
                     {
                         head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                         up = false; down = true; left = false; right = false;
@@ -192,14 +200,14 @@ namespace SnackAttack.Desktop
                     }
 
 
-                    if (kstate.IsKeyDown(Keys.A))
+                    else if (kstate.IsKeyDown(Keys.A))
                     {
                         head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                         up = false; down = false; left = true; right = false;
                         noKeyPressed = false;
                     }
 
-                    if (kstate.IsKeyDown(Keys.D))
+                    else if (kstate.IsKeyDown(Keys.D))
                     {
                         head.X += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                         up = false; down = false; left = false; right = true;
@@ -209,6 +217,7 @@ namespace SnackAttack.Desktop
 
                 previousPositions.Insert(0, lastPreviousPosition);
 
+                //this stops the snake from moving out of the screen :)
                 head.X = Math.Min(Math.Max(headAsset.Width / 2, head.X), graphics.PreferredBackBufferWidth - headAsset.Width / 2);
                 head.Y = Math.Min(Math.Max(headAsset.Height / 2, head.Y), graphics.PreferredBackBufferHeight - headAsset.Height / 2);
 
@@ -217,9 +226,15 @@ namespace SnackAttack.Desktop
                 {
                     Console.WriteLine("Intersection! at :" + headBox.Max + "," + obstacleBox.Max);
 
+
+                    snakeSpeed = snakeSpeed / 5;
+
+                    Console.WriteLine("Speed: " + snakeSpeed);
+
                     if (up)
                     {
                         head.Y += collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        
                     }
                     else if (down)
                     {
@@ -233,6 +248,10 @@ namespace SnackAttack.Desktop
                     {
                         head.X -= collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     }
+                }
+
+                if(snakeSpeed < maxSpeed){
+                    snakeSpeed++;
                 }
 
                 positions[0] = head;
@@ -249,8 +268,6 @@ namespace SnackAttack.Desktop
                     {
                         temp = previousPositions.ToArray()[i * spacing];
                     }
-                    
-
 
                     //store back in list
                     positions[i] = temp;
@@ -261,7 +278,7 @@ namespace SnackAttack.Desktop
                 if (previousPositions.Count > spacing * positions.Count && positions.Count <= maxLength)
                 {
 
-                    Vector2 position = previousPositions.ToArray()[snakeLength];
+                    Vector2 position = positions[positions.Count-1];
                     growSnake(1, position);
                     snakeLength++;
                 }

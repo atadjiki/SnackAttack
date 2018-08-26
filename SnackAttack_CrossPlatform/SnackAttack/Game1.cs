@@ -76,7 +76,7 @@ namespace SnackAttack
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
-           // obstacle = Content.Load<Texture2D>("ball");
+            obstacle = Content.Load<Texture2D>("ball");
 
 
 
@@ -128,13 +128,15 @@ namespace SnackAttack
             spriteBatch.Begin();
 
             // TODO: Add your drawing code here
-            spriteBatch.DrawString(font, timeSpan.Seconds.ToString(), new Vector2(100, 100), Color.Black);
+            spriteBatch.DrawString(font, timeSpan.Seconds.ToString(), 
+                                   new Vector2(graphics.PreferredBackBufferWidth - (11*graphics.PreferredBackBufferWidth/12), 
+                                               graphics.PreferredBackBufferHeight - (11*graphics.PreferredBackBufferHeight/12)), Color.Black);
 
             snake.DrawSnake(spriteBatch);
 
-            //spriteBatch.
-            //Draw(obstacle, obstaclePos, null, Color.White, 0f, 
-            //new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+            spriteBatch.
+            Draw(obstacle, obstaclePos, null, Color.White, 0f, 
+            new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
 
 
             spriteBatch.End();
@@ -145,10 +147,10 @@ namespace SnackAttack
         //keeps track of snake head bounding box
         protected void UpdateBoundingBox()
         {
-            //this.obstacleBox.Min.X = obstaclePos.X;
-            //this.obstacleBox.Min.Y = obstaclePos.Y;
-            //this.obstacleBox.Max.X = obstaclePos.X + obstacle.Width;
-            //this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
+            this.obstacleBox.Min.X = obstaclePos.X;
+            this.obstacleBox.Min.Y = obstaclePos.Y;
+            this.obstacleBox.Max.X = obstaclePos.X + obstacle.Width;
+            this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
         }
 
         private void ManageTimer(GameTime gameTime){
