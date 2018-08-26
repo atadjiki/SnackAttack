@@ -26,6 +26,9 @@ namespace SnackAttack
         Vector2 obstaclePos;
         BoundingBox obstacleBox;
 
+        Texture2D pause;
+        Vector2 pausePos;
+
 
         //these are just placeholders to test win condition 
         Texture2D mouse;
@@ -35,6 +38,10 @@ namespace SnackAttack
         TimeSpan timeSpan = TimeSpan.FromMilliseconds(31000); //30 sec in ms
         bool timeup = false;
         bool win = false;
+
+        bool paused = false;
+
+        KeyboardState currentKB, previousKB;
 
         private SpriteFont font;
 
@@ -66,6 +73,7 @@ namespace SnackAttack
             mice = new Mice(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
 
             obstaclePos = new Vector2(initialX + 150, initialY - 200);
+            pausePos = new Vector2(graphics.PreferredBackBufferWidth - 100, graphics.PreferredBackBufferHeight - 100);
             mousePos = new Vector2(initialX -150, initialY - 150);
 
             base.Initialize();
@@ -84,6 +92,7 @@ namespace SnackAttack
 
             //load timer font
             font = Content.Load<SpriteFont>("Timer");
+            pause = Content.Load<Texture2D>("pause");
 
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
@@ -114,25 +123,40 @@ namespace SnackAttack
         protected override void Update(GameTime gameTime)
         {
 
-            ManageTimer(gameTime);
+            if(currentKB != null)
+                previousKB = currentKB;
+            currentKB = Keyboard.GetState();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || currentKB.IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (currentKB.IsKeyUp(Keys.P) && previousKB.IsKeyDown(Keys.P))
+                paused = !paused;    
+
+            if(paused)
+                return;
+
 
 
             // TODO: Add your update logic here
-            obstacleBox = UpdateBoundingBox(obstacleBox, obstacle, obstaclePos);
-            mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
+            if(!paused){
 
-            if(!timeup){
-                var kstate = Keyboard.GetState(); //get keyboard input;
+                ManageTimer(gameTime);
 
-                //check win
-                winCondition();
+                obstacleBox = UpdateBoundingBox(obstacleBox, obstacle, obstaclePos);
+                mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
 
-                snake.UpdateSnakePositions(kstate, gameTime, graphics, doesIntersect(snake.headBox, obstacleBox)); //update snake 
-                mousePos = mice.UpdateMicePosition(gameTime, graphics, snake.getHeadPosition());
+                if (!timeup)
+                {
+
+                    //check win
+                    winCondition();
+
+                    snake.UpdateSnakePositions(currentKB, gameTime, graphics, doesIntersect(snake.headBox, obstacleBox)); //update snake 
+                    mousePos = mice.UpdateMicePosition(gameTime, graphics, snake.getHeadPosition());
+                }
             }
+
 
             base.Update(gameTime);
 
@@ -140,10 +164,10 @@ namespace SnackAttack
 
         public bool doesIntersect(BoundingBox a, BoundingBox b){
 
-            bool doesIntersect = a.Intersects(b);
-            if (doesIntersect)
+            bool intersect = a.Intersects(b);
+            if (intersect)
                 Console.WriteLine("Intersection at: " + a.Max + "," + b.Max);
-            return doesIntersect;
+            return intersect;
 
         }
 
@@ -178,11 +202,16 @@ namespace SnackAttack
             snake.DrawSnake(spriteBatch);
             
             mice.DrawMice(spriteBatch, win);
+
             spriteBatch.
             Draw(obstacle, obstaclePos, null, Color.White, 0f, 
             new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
 
-
+            if(paused){
+                spriteBatch.
+                           Draw(pause, pausePos, null, Color.White, 0f,
+                                new Vector2(pause.Width / 2, pause.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+            }
 
             spriteBatch.End();
 
