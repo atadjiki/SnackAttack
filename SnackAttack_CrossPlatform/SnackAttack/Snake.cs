@@ -11,25 +11,35 @@ namespace SnackAttack.Desktop
         //constants
         float snakeSpeed;
 
-        int snakeLength; // amnount of snake nodes, including head
+        int snakeLength; // maximum amnount of snake nodes, including head
+        int maxLength;
+        int minLength;
         int spacing; //track every nth head positions (0 will look really mushed)
         int collisionModifier = 10;
+
 
         bool up = false, down = false, left = false, right = false;
         bool noKeyPressed = true;
         bool tailMoving = false;
+        bool coilMode = false;
 
         List<Vector2> previousPositions;
         List<Texture2D> snakeBody;
         List<Vector2> positions;
         BoundingBox headBox = new BoundingBox();
+
+        Texture2D headAsset;
+        Texture2D bodyAsset;
+        Texture2D tailAsset;
          
 
 
         public Snake(float initialX, float initialY)
         {
             snakeSpeed = 100f;
-            snakeLength = 5;
+            snakeLength = 2; //must always have at least a head and tail!
+            maxLength = 16;
+            minLength = 2;
             spacing = 25;
 
 
@@ -49,20 +59,31 @@ namespace SnackAttack.Desktop
 
         }
 
+        public void growSnake(int amount, Vector2 position){
+
+            positions.Insert(positions.Count-1, position);
+            snakeBody.Insert(positions.Count - 2, bodyAsset);
+
+
+        }
+
+        public void shrinkSnake(){
+            positions.RemoveAt(positions.Count - 1);
+
+        }
+
         public void loadSnake(Texture2D head, Texture2D body, Texture2D tail)
         {
             //add snake head
 
-            snakeBody.Add(head);
+            headAsset = head;
+            snakeBody.Add(headAsset);
 
-            //add snake body
-            for (int i = 1; i < snakeLength-1; i++)
-            {
-                snakeBody.Add(body);
-            }
+            bodyAsset = body;
 
             //add snake tail
-            snakeBody.Add(tail);
+            tailAsset = tail;
+            snakeBody.Add(tailAsset);
         }
 
         public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, BoundingBox obstacleBox)
@@ -105,8 +126,11 @@ namespace SnackAttack.Desktop
                 noKeyPressed = false;
             }
 
+            if (noKeyPressed && !coilMode)
+                return;
+
             //dont change any positions if the snake isnt moving 
-            if (!noKeyPressed)
+            if (!noKeyPressed || coilMode)
             {
 
                 //are we moving the head or the tail now?
@@ -185,8 +209,8 @@ namespace SnackAttack.Desktop
 
                 previousPositions.Insert(0, lastPreviousPosition);
 
-                head.X = Math.Min(Math.Max(snakeBody[0].Width / 2, head.X), graphics.PreferredBackBufferWidth - snakeBody[0].Width / 2);
-                head.Y = Math.Min(Math.Max(snakeBody[0].Height / 2, head.Y), graphics.PreferredBackBufferHeight - snakeBody[0].Height / 2);
+                head.X = Math.Min(Math.Max(headAsset.Width / 2, head.X), graphics.PreferredBackBufferWidth - headAsset.Width / 2);
+                head.Y = Math.Min(Math.Max(headAsset.Height / 2, head.Y), graphics.PreferredBackBufferHeight - headAsset.Height / 2);
 
                 //check collision, if this move is allowed, store the position - if not, stay where we are!
                 if (headBox.Intersects(obstacleBox))
@@ -213,6 +237,7 @@ namespace SnackAttack.Desktop
 
                 positions[0] = head;
 
+
                 // loop through list, set positions for all nodes while incrementing positions
                 for (int i = 1; i < snakeLength; i++)
                 {
@@ -231,6 +256,20 @@ namespace SnackAttack.Desktop
                     positions[i] = temp;
 
                 }
+
+                //if there is room to grow, and the head has moved enough, increment snake 
+                if (previousPositions.Count > spacing * positions.Count && positions.Count <= maxLength)
+                {
+
+                    Vector2 position = previousPositions.ToArray()[snakeLength];
+                    growSnake(1, position);
+                    snakeLength++;
+                }
+                else if(snakeLength==maxLength){
+                    //stop snake until opposite moves
+                }
+
+
             }
 
         }

@@ -25,6 +25,10 @@ namespace SnackAttack
         Vector2 obstaclePos;
         BoundingBox obstacleBox;
 
+        TimeSpan timeSpan = TimeSpan.FromMilliseconds(31000); //30 sec in ms
+        private SpriteFont font;
+
+
         public Game1()
         {
 
@@ -66,6 +70,9 @@ namespace SnackAttack
 
             // TODO: use this.Content to load your game content here
 
+            //load timer font
+            font = Content.Load<SpriteFont>("Timer");
+
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
@@ -93,7 +100,7 @@ namespace SnackAttack
         protected override void Update(GameTime gameTime)
         {
 
-           
+            ManageTimer(gameTime);
 
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
@@ -121,7 +128,7 @@ namespace SnackAttack
             spriteBatch.Begin();
 
             // TODO: Add your drawing code here
-
+            spriteBatch.DrawString(font, timeSpan.Seconds.ToString(), new Vector2(100, 100), Color.Black);
 
             snake.DrawSnake(spriteBatch);
 
@@ -142,6 +149,18 @@ namespace SnackAttack
             //this.obstacleBox.Min.Y = obstaclePos.Y;
             //this.obstacleBox.Max.X = obstaclePos.X + obstacle.Width;
             //this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
+        }
+
+        private void ManageTimer(GameTime gameTime){
+
+            timeSpan -= gameTime.ElapsedGameTime;
+            if (timeSpan < TimeSpan.Zero)
+
+            {
+                Exit();
+
+            }
+
         }
 
     }
