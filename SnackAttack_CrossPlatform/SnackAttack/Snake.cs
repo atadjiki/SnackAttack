@@ -19,7 +19,7 @@ namespace SnackAttack.Desktop
 
         Queue<Vector2> previousPositions;
         List<Texture2D> snakeBody;
-        List<Vector2> positions;
+        public List<Vector2> positions;
         BoundingBox headBox = new BoundingBox();
 
         public Snake(float initialX, float initialY)

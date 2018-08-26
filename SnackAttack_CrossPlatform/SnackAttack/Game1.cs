@@ -20,8 +20,11 @@ namespace SnackAttack
         public Color backgroundColor = Color.CornflowerBlue;
 
         Snake snake;
+        Mice mice;
 
         Texture2D obstacle;
+        List<Texture2D> bombs;
+        List<Vector2> bombPostion;
         Vector2 obstaclePos;
         BoundingBox obstacleBox;
 
@@ -48,9 +51,19 @@ namespace SnackAttack
 
             obstacleBox = new BoundingBox();
             snake = new Snake(initialX, initialY);
-
+            mice = new Mice(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
 
             obstaclePos = new Vector2(initialX + 150, initialY - 200);
+
+            // Just for Reference of position of mice
+            float x = graphics.PreferredBackBufferWidth;
+            float y = graphics.PreferredBackBufferHeight;
+            bombs = new List<Texture2D>(4);
+            bombPostion = new List<Vector2>(4);
+            bombPostion.Add(new Vector2(x - 50f, y - 50f));
+            bombPostion.Add(new Vector2(0f + 50f, y - 50f));
+            bombPostion.Add(new Vector2(0f + 50f, 0f + 50f));
+            bombPostion.Add(new Vector2(x - 50f, 0f + 50f));
 
             base.Initialize();
         }
@@ -68,9 +81,12 @@ namespace SnackAttack
 
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("ball"), Content.Load<Texture2D>("ball"), Content.Load<Texture2D>("ball"));
-
+            mice.loadMice(Content.Load<Texture2D>("mice"));
             obstacle = Content.Load<Texture2D>("ball");
-
+            for (int i = 0; i < 4; i++)
+            {
+                bombs.Add(Content.Load<Texture2D>("Bomb"));
+            }
 
 
         }
@@ -102,7 +118,7 @@ namespace SnackAttack
             var kstate = Keyboard.GetState(); //get keyboard inputs
 
             snake.UpdateSnakePositions(kstate, gameTime, graphics, obstacleBox); //update snake 
-
+            mice.UpdateMicePosition(gameTime, graphics, snake.positions[0]);
             base.Update(gameTime);
 
         }
@@ -119,13 +135,19 @@ namespace SnackAttack
             spriteBatch.Begin();
 
             snake.DrawSnake(spriteBatch);
-
+            for (int i = 0; i < 4; i++)
+            {
+                spriteBatch.
+                    Draw(bombs[i], bombPostion[i], null, Color.White, 0f,
+                            new Vector2(bombs[i].Width / 2, bombs[i].Height / 2), 0.3f, SpriteEffects.None, 0f);
+            }
+            mice.DrawMice(spriteBatch);
             spriteBatch.
                        Draw(obstacle, obstaclePos, null, Color.White, 0f, 
                             new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-        
+            
 
-        spriteBatch.End();
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
