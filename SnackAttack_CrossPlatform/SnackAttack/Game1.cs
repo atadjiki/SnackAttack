@@ -26,6 +26,8 @@ namespace SnackAttack
         BoundingBox obstacleBox;
 
         TimeSpan timeSpan = TimeSpan.FromMilliseconds(31000); //30 sec in ms
+        bool timeup = false;
+
         private SpriteFont font;
 
 
@@ -109,11 +111,22 @@ namespace SnackAttack
             // TODO: Add your update logic here
             UpdateBoundingBox();
 
-            var kstate = Keyboard.GetState(); //get keyboard inputs
+            if(!timeup){
+                var kstate = Keyboard.GetState(); //get keyboard input;
 
-            snake.UpdateSnakePositions(kstate, gameTime, graphics, obstacleBox); //update snake 
+                snake.UpdateSnakePositions(kstate, gameTime, graphics, doesIntersect(snake.headBox, obstacleBox)); //update snake 
+            }
 
             base.Update(gameTime);
+
+        }
+
+        public bool doesIntersect(BoundingBox a, BoundingBox b){
+
+            bool doesIntersect = a.Intersects(b);
+            if (doesIntersect)
+                Console.WriteLine("Intersection at: " + a.Max + "," + b.Max);
+            return doesIntersect;
 
         }
 
@@ -128,9 +141,13 @@ namespace SnackAttack
             spriteBatch.Begin();
 
             // TODO: Add your drawing code here
-            spriteBatch.DrawString(font, timeSpan.Seconds.ToString(), 
+            spriteBatch.DrawString(font, getTimerText(), 
                                    new Vector2(graphics.PreferredBackBufferWidth - (11*graphics.PreferredBackBufferWidth/12), 
                                                graphics.PreferredBackBufferHeight - (11*graphics.PreferredBackBufferHeight/12)), Color.Black);
+
+            spriteBatch.DrawString(font, "Speed: " + snake.getSpeed(),
+                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
+                                               graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
 
             snake.DrawSnake(spriteBatch);
 
@@ -153,13 +170,22 @@ namespace SnackAttack
             this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
         }
 
+        public string getTimerText(){
+
+            if(!timeup){
+                return "Time: " + timeSpan.Seconds.ToString();
+            } else{
+                return "Timeup!";
+            }
+        }
+
         private void ManageTimer(GameTime gameTime){
 
             timeSpan -= gameTime.ElapsedGameTime;
             if (timeSpan < TimeSpan.Zero)
 
             {
-                Exit();
+                timeup = true;
 
             }
 

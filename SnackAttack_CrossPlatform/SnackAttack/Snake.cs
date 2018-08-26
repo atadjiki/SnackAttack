@@ -17,6 +17,7 @@ namespace SnackAttack.Desktop
      //   int minLength;
         int spacing; //track every nth head positions (0 will look really mushed)
         int collisionModifier = 100;
+        int slowdown = 5;
 
 
         bool up = false, down = false, left = false, right = false;
@@ -27,7 +28,7 @@ namespace SnackAttack.Desktop
         List<Vector2> previousPositions;
         List<Texture2D> snakeBody;
         List<Vector2> positions;
-        BoundingBox headBox = new BoundingBox();
+        public BoundingBox headBox = new BoundingBox();
 
         Texture2D headAsset;
         Texture2D bodyAsset;
@@ -92,7 +93,7 @@ namespace SnackAttack.Desktop
             snakeBody.Add(tailAsset);
         }
 
-        public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, BoundingBox obstacleBox)
+        public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect)
         {
 
             UpdateBoundingBox();
@@ -222,12 +223,10 @@ namespace SnackAttack.Desktop
                 head.Y = Math.Min(Math.Max(headAsset.Height / 2, head.Y), graphics.PreferredBackBufferHeight - headAsset.Height / 2);
 
                 //check collision, if this move is allowed, store the position - if not, stay where we are!
-                if (headBox.Intersects(obstacleBox))
+                if (doesIntersect)
                 {
-                    Console.WriteLine("Intersection! at :" + headBox.Max + "," + obstacleBox.Max);
-
-
-                    snakeSpeed = snakeSpeed / 5;
+                
+                    snakeSpeed = snakeSpeed / slowdown;
 
                     Console.WriteLine("Speed: " + snakeSpeed);
 
@@ -306,12 +305,16 @@ namespace SnackAttack.Desktop
         }
 
         //keeps track of snake head bounding box
-        protected void UpdateBoundingBox()
+        public void UpdateBoundingBox()
         {
             this.headBox.Min.X = positions[0].X;
             this.headBox.Min.Y = positions[0].Y;
             this.headBox.Max.X = positions[0].X + snakeBody[0].Width;
             this.headBox.Max.Y = positions[0].Y + snakeBody[0].Height;
+        }
+
+        public float getSpeed(){
+            return snakeSpeed;
         }
 
         private void repopulatePreviousPositions(){
