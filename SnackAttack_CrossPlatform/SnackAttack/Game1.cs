@@ -28,6 +28,19 @@ namespace SnackAttack
         Vector2 obstaclePos;
         BoundingBox obstacleBox;
 
+
+        //these are just placeholders to test win condition 
+        Texture2D mouse;
+        Vector2 mousePos;
+        BoundingBox mouseBox;
+
+        TimeSpan timeSpan = TimeSpan.FromMilliseconds(31000); //30 sec in ms
+        bool timeup = false;
+        bool win = false;
+
+        private SpriteFont font;
+
+
         public Game1()
         {
 
@@ -49,11 +62,13 @@ namespace SnackAttack
             float initialX = graphics.PreferredBackBufferWidth / 2; //get middle of the screen 
             float initialY = graphics.PreferredBackBufferHeight / 2;
 
+            mouseBox = new BoundingBox();
             obstacleBox = new BoundingBox();
             snake = new Snake(initialX, initialY);
             mice = new Mice(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
 
             obstaclePos = new Vector2(initialX + 150, initialY - 200);
+            mousePos = new Vector2(initialX -150, initialY - 150);
 
             // Just for Reference of position of mice
             float x = graphics.PreferredBackBufferWidth;
@@ -79,14 +94,16 @@ namespace SnackAttack
 
             // TODO: use this.Content to load your game content here
 
+            //load timer font
+            font = Content.Load<SpriteFont>("Timer");
+
             //load snake assets
-            snake.loadSnake(Content.Load<Texture2D>("ball"), Content.Load<Texture2D>("ball"), Content.Load<Texture2D>("ball"));
-            mice.loadMice(Content.Load<Texture2D>("mice"));
+            snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
+
             obstacle = Content.Load<Texture2D>("ball");
-            for (int i = 0; i < 4; i++)
-            {
-                bombs.Add(Content.Load<Texture2D>("Bomb"));
-            }
+
+            mouse = Content.Load<Texture2D>("mouse");
+
 
 
         }
@@ -108,19 +125,46 @@ namespace SnackAttack
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+
+            ManageTimer(gameTime);
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
 
             // TODO: Add your update logic here
-            UpdateBoundingBox();
+            obstacleBox = UpdateBoundingBox(obstacleBox, obstacle, obstaclePos);
+            mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
 
-            var kstate = Keyboard.GetState(); //get keyboard inputs
+            if(!timeup){
+                var kstate = Keyboard.GetState(); //get keyboard input;
 
-            snake.UpdateSnakePositions(kstate, gameTime, graphics, obstacleBox); //update snake 
-            mice.UpdateMicePosition(gameTime, graphics, snake.positions[0]);
+                //check win
+                winCondition();
+
+                snake.UpdateSnakePositions(kstate, gameTime, graphics, doesIntersect(snake.headBox, obstacleBox)); //update snake 
+            }
+
             base.Update(gameTime);
 
+        }
+
+        public bool doesIntersect(BoundingBox a, BoundingBox b){
+
+            bool doesIntersect = a.Intersects(b);
+            if (doesIntersect)
+                Console.WriteLine("Intersection at: " + a.Max + "," + b.Max);
+            return doesIntersect;
+
+        }
+
+        public void winCondition(){
+
+            if(doesIntersect(snake.headBox, mouseBox)){
+
+                timeup = true;
+                win = true;  
+            }
         }
 
         /// <summary>
@@ -131,8 +175,16 @@ namespace SnackAttack
         {
             GraphicsDevice.Clear(backgroundColor);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
+
+            // TODO: Add your drawing code here
+            spriteBatch.DrawString(font, getTimerText(), 
+                                   new Vector2(graphics.PreferredBackBufferWidth - (11*graphics.PreferredBackBufferWidth/12), 
+                                               graphics.PreferredBackBufferHeight - (11*graphics.PreferredBackBufferHeight/12)), Color.Black);
+
+            spriteBatch.DrawString(font, "Speed: " + snake.getSpeed(),
+                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
+                                               graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
 
             snake.DrawSnake(spriteBatch);
             for (int i = 0; i < 4; i++)
@@ -143,9 +195,16 @@ namespace SnackAttack
             }
             mice.DrawMice(spriteBatch);
             spriteBatch.
-                       Draw(obstacle, obstaclePos, null, Color.White, 0f, 
-                            new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-            
+            Draw(obstacle, obstaclePos, null, Color.White, 0f, 
+            new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+
+            if(!win){
+                spriteBatch.
+                       Draw(mouse, mousePos, null, Color.White, 0f,
+                new Vector2(mouse.Width / 2, mouse.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+
+            }
+
 
             spriteBatch.End();
 
@@ -153,12 +212,41 @@ namespace SnackAttack
         }
 
         //keeps track of snake head bounding box
-        protected void UpdateBoundingBox()
+        protected BoundingBox UpdateBoundingBox(BoundingBox box, Texture2D texture, Vector2 pos)
         {
-            this.obstacleBox.Min.X = obstaclePos.X;
-            this.obstacleBox.Min.Y = obstaclePos.Y;
-            this.obstacleBox.Max.X = obstaclePos.X + obstacle.Width;
-            this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
+            box.Min.X = pos.X;
+            box.Min.Y = pos.Y;
+            box.Max.X = pos.X + texture.Width;
+            box.Max.Y = pos.Y + texture.Height;
+
+            return box;
+        }
+
+        public string getTimerText(){
+
+            if(!timeup && !win){
+                return "Time: " + timeSpan.Seconds.ToString();
+            }
+
+            else if(win){
+                return "You Win!";
+            }
+
+            else{
+                return "Timeup!";
+            }
+        }
+
+        private void ManageTimer(GameTime gameTime){
+
+            timeSpan -= gameTime.ElapsedGameTime;
+            if (timeSpan < TimeSpan.Zero)
+
+            {
+                timeup = true;
+
+            }
+
         }
 
     }
