@@ -25,8 +25,15 @@ namespace SnackAttack
         Vector2 obstaclePos;
         BoundingBox obstacleBox;
 
+
+        //these are just placeholders to test win condition 
+        Texture2D mouse;
+        Vector2 mousePos;
+        BoundingBox mouseBox;
+
         TimeSpan timeSpan = TimeSpan.FromMilliseconds(31000); //30 sec in ms
         bool timeup = false;
+        bool win = false;
 
         private SpriteFont font;
 
@@ -52,11 +59,13 @@ namespace SnackAttack
             float initialX = graphics.PreferredBackBufferWidth / 2; //get middle of the screen 
             float initialY = graphics.PreferredBackBufferHeight / 2;
 
+            mouseBox = new BoundingBox();
             obstacleBox = new BoundingBox();
             snake = new Snake(initialX, initialY);
 
 
             obstaclePos = new Vector2(initialX + 150, initialY - 200);
+            mousePos = new Vector2(initialX -150, initialY - 150);
 
             base.Initialize();
         }
@@ -79,6 +88,8 @@ namespace SnackAttack
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
             obstacle = Content.Load<Texture2D>("ball");
+
+            mouse = Content.Load<Texture2D>("mouse");
 
 
 
@@ -109,10 +120,14 @@ namespace SnackAttack
 
 
             // TODO: Add your update logic here
-            UpdateBoundingBox();
+            obstacleBox = UpdateBoundingBox(obstacleBox, obstacle, obstaclePos);
+            mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
 
             if(!timeup){
                 var kstate = Keyboard.GetState(); //get keyboard input;
+
+                //check win
+                winCondition();
 
                 snake.UpdateSnakePositions(kstate, gameTime, graphics, doesIntersect(snake.headBox, obstacleBox)); //update snake 
             }
@@ -128,6 +143,15 @@ namespace SnackAttack
                 Console.WriteLine("Intersection at: " + a.Max + "," + b.Max);
             return doesIntersect;
 
+        }
+
+        public void winCondition(){
+
+            if(doesIntersect(snake.headBox, mouseBox)){
+
+                timeup = true;
+                win = true;  
+            }
         }
 
         /// <summary>
@@ -155,6 +179,13 @@ namespace SnackAttack
             Draw(obstacle, obstaclePos, null, Color.White, 0f, 
             new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
 
+            if(!win){
+                spriteBatch.
+                       Draw(mouse, mousePos, null, Color.White, 0f,
+                new Vector2(mouse.Width / 2, mouse.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+
+            }
+
 
             spriteBatch.End();
 
@@ -162,19 +193,27 @@ namespace SnackAttack
         }
 
         //keeps track of snake head bounding box
-        protected void UpdateBoundingBox()
+        protected BoundingBox UpdateBoundingBox(BoundingBox box, Texture2D texture, Vector2 pos)
         {
-            this.obstacleBox.Min.X = obstaclePos.X;
-            this.obstacleBox.Min.Y = obstaclePos.Y;
-            this.obstacleBox.Max.X = obstaclePos.X + obstacle.Width;
-            this.obstacleBox.Max.Y = obstaclePos.Y + obstacle.Height;
+            box.Min.X = pos.X;
+            box.Min.Y = pos.Y;
+            box.Max.X = pos.X + texture.Width;
+            box.Max.Y = pos.Y + texture.Height;
+
+            return box;
         }
 
         public string getTimerText(){
 
-            if(!timeup){
+            if(!timeup && !win){
                 return "Time: " + timeSpan.Seconds.ToString();
-            } else{
+            }
+
+            else if(win){
+                return "You Win!";
+            }
+
+            else{
                 return "Timeup!";
             }
         }
