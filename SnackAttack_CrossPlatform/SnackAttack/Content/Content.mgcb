@@ -37,18 +37,6 @@
 /processorParam:TextureFormat=Color
 /build:greenball.png
 
-#begin mouse.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:mouse.png
-
 #begin redball.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -68,7 +56,7 @@
 /processorParam:TextureFormat=Compressed
 /build:Timer.spritefont
 
-#begin mice.png
+#begin mouse.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -78,5 +66,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:mice.png
+/build:mouse.png
 

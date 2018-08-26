@@ -47,12 +47,13 @@ namespace SnackAttack.Desktop
         }
 
 
-        public void loadMice(Texture2D head)
+        public Texture2D loadMice(Texture2D head)
         {
             miceBody = head;
+            return miceBody;
         }
 
-        public void UpdateMicePosition(GameTime gameTime, GraphicsDeviceManager graphics, Vector2 headPosition)
+        public Vector2 UpdateMicePosition(GameTime gameTime, GraphicsDeviceManager graphics, Vector2 headPosition)
         {
             UpdateBoundingBox();
             float x_direction;
@@ -98,11 +99,16 @@ namespace SnackAttack.Desktop
                 miceLocation.X += (float)Math.Round((miceSpeed * x_direction) * (float)gameTime.ElapsedGameTime.TotalSeconds);
                 miceLocation.Y += (float)Math.Round((miceSpeed * y_direction) * (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
+
+            return miceLocation;
         }
 
-        public void DrawMice(SpriteBatch spriteBatch)
+        public void DrawMice(SpriteBatch spriteBatch, bool win)
         {
-            spriteBatch.Draw(miceBody, this.miceLocation, null, Color.White, 0f, new Vector2(miceBody.Width / 2, miceBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
+            if (!win)
+            {
+                spriteBatch.Draw(miceBody, this.miceLocation, null, Color.White, 0f, new Vector2(miceBody.Width / 2, miceBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
+            }
         }
 
         protected void UpdateBoundingBox()

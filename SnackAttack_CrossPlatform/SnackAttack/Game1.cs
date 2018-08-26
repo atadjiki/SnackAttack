@@ -23,8 +23,6 @@ namespace SnackAttack
         Mice mice;
 
         Texture2D obstacle;
-        List<Texture2D> bombs;
-        List<Vector2> bombPostion;
         Vector2 obstaclePos;
         BoundingBox obstacleBox;
 
@@ -70,16 +68,6 @@ namespace SnackAttack
             obstaclePos = new Vector2(initialX + 150, initialY - 200);
             mousePos = new Vector2(initialX -150, initialY - 150);
 
-            // Just for Reference of position of mice
-            float x = graphics.PreferredBackBufferWidth;
-            float y = graphics.PreferredBackBufferHeight;
-            bombs = new List<Texture2D>(4);
-            bombPostion = new List<Vector2>(4);
-            bombPostion.Add(new Vector2(x - 50f, y - 50f));
-            bombPostion.Add(new Vector2(0f + 50f, y - 50f));
-            bombPostion.Add(new Vector2(0f + 50f, 0f + 50f));
-            bombPostion.Add(new Vector2(x - 50f, 0f + 50f));
-
             base.Initialize();
         }
 
@@ -100,9 +88,9 @@ namespace SnackAttack
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
-            obstacle = Content.Load<Texture2D>("ball");
+            obstacle = Content.Load<Texture2D>("redball");
 
-            mouse = Content.Load<Texture2D>("mouse");
+            mouse = mice.loadMice(Content.Load<Texture2D>("mouse"));
 
 
 
@@ -143,6 +131,7 @@ namespace SnackAttack
                 winCondition();
 
                 snake.UpdateSnakePositions(kstate, gameTime, graphics, doesIntersect(snake.headBox, obstacleBox)); //update snake 
+                mousePos = mice.UpdateMicePosition(gameTime, graphics, snake.getHeadPosition());
             }
 
             base.Update(gameTime);
@@ -187,23 +176,12 @@ namespace SnackAttack
                                                graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
 
             snake.DrawSnake(spriteBatch);
-            for (int i = 0; i < 4; i++)
-            {
-                spriteBatch.
-                    Draw(bombs[i], bombPostion[i], null, Color.White, 0f,
-                            new Vector2(bombs[i].Width / 2, bombs[i].Height / 2), 0.3f, SpriteEffects.None, 0f);
-            }
-            mice.DrawMice(spriteBatch);
+            
+            mice.DrawMice(spriteBatch, win);
             spriteBatch.
             Draw(obstacle, obstaclePos, null, Color.White, 0f, 
             new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
 
-            if(!win){
-                spriteBatch.
-                       Draw(mouse, mousePos, null, Color.White, 0f,
-                new Vector2(mouse.Width / 2, mouse.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-
-            }
 
 
             spriteBatch.End();
