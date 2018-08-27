@@ -33,7 +33,7 @@ namespace SnackAttack.Desktop
         Texture2D headAsset;
         Texture2D bodyAsset;
         Texture2D tailAsset;
-         
+
 
 
         public Snake(float initialX, float initialY)
