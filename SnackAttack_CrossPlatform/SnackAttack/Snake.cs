@@ -26,8 +26,9 @@ namespace SnackAttack.Desktop
         bool coilMode = false;
 
         List<Vector2> previousPositions;
-        List<Texture2D> snakeBody;
         List<Vector2> positions;
+        List<Texture2D> snakeBody;
+
         public BoundingBox headBox = new BoundingBox();
 
         Texture2D headAsset;
@@ -49,7 +50,6 @@ namespace SnackAttack.Desktop
             snakeBody = new List<Texture2D>(snakeLength);
             positions = new List<Vector2>(snakeLength);
             previousPositions = new List<Vector2>(snakeLength * spacing);
-
 
             //add and increment offsets in loop
 

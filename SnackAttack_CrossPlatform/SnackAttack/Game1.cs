@@ -44,7 +44,7 @@ namespace SnackAttack
         KeyboardState currentKB, previousKB;
         private SpriteFont font;
 
-        enum GameState{ Start, Playing, Paused, Won};
+        enum GameState{ Start, Playing, Paused, Won, TimeUp};
         GameState gameState;
 
 
@@ -53,6 +53,7 @@ namespace SnackAttack
 
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            gameState = GameState.Start;
 
         }
 
@@ -64,8 +65,6 @@ namespace SnackAttack
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             initialX = graphics.PreferredBackBufferWidth / 2; //get middle of the screen 
             initialY = graphics.PreferredBackBufferHeight / 2;
 
@@ -77,9 +76,9 @@ namespace SnackAttack
             obstacles = new List<Vector2>();
             InitializeObstacles();
             pausePos = new Vector2(graphics.PreferredBackBufferWidth - 100, graphics.PreferredBackBufferHeight - 100);
-            mousePos = new Vector2(initialX -150, initialY - 150);
+            mousePos = new Vector2(initialX - 150, initialY - 150);
 
-            gameState = GameState.Playing;
+
             timeSpan = TimeSpan.FromMilliseconds(31000);
             timeup = false;
 
@@ -94,8 +93,6 @@ namespace SnackAttack
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
 
             //load timer font
             font = Content.Load<SpriteFont>("Timer");
@@ -118,7 +115,6 @@ namespace SnackAttack
         /// </summary>
         protected override void UnloadContent()
         {
-            // TODO: Unload any non ContentManager content here 
 
         }
 
@@ -130,51 +126,103 @@ namespace SnackAttack
         protected override void Update(GameTime gameTime)
         {
 
-            if(currentKB != null)
-                previousKB = currentKB;
-            currentKB = Keyboard.GetState();
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || currentKB.IsKeyDown(Keys.Escape))
-                Exit();
 
-            if (currentKB.IsKeyUp(Keys.P) && previousKB.IsKeyDown(Keys.P) && gameState == GameState.Paused)
-                gameState = GameState.Playing;
-            else if (currentKB.IsKeyUp(Keys.P) && previousKB.IsKeyDown(Keys.P) && gameState == GameState.Playing)
-                gameState = GameState.Paused;
-
-            if(gameState == GameState.Paused)
-                return;
-
-            if (gameState == GameState.Won && currentKB.IsKeyDown(Keys.R))
+            if (gameState == GameState.Start)
             {
-                Initialize();
-                return;
+
+                handleStartMenuInputs();
             }
 
+            else if (gameState == GameState.Playing)
+            {
 
-            // TODO: Add your update logic here
-            if(gameState == GameState.Playing){
+                handleInputs();
 
-                ManageTimer(gameTime);
-
-                UpdateObstacleBoxes();
-
-                mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
-
-                if (!timeup)
-                {
-
-                    //check win
-                    winCondition();
-                    bool collision = CheckCollisions();
-                    snake.UpdateSnakePositions(currentKB, gameTime, graphics, collision); //update snake 
-                    mousePos = mice.UpdateMicePosition(gameTime, graphics, snake.getHeadPosition());
-                }
+                updateGame(gameTime);
+            }
+            else if (gameState == GameState.Paused)
+            {
+                handleInputs();
+            }
+            else if (gameState == GameState.Won)
+            {
+                handleInputs();
+            }
+            else if (gameState == GameState.TimeUp){
+                handleInputs();
             }
 
 
             base.Update(gameTime);
 
+        }
+
+        private void updateGame(GameTime gameTime)
+        {
+            ManageTimer(gameTime);
+
+            UpdateObstacleBoxes();
+
+            mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
+
+            if (!timeup)
+            {
+
+                //check win
+                winCondition();
+                bool collision = CheckCollisions();
+                snake.UpdateSnakePositions(currentKB, gameTime, graphics, collision); //update snake 
+                mousePos = mice.UpdateMicePosition(gameTime, graphics, snake.getHeadPosition());
+            }
+        }
+
+        private void handleStartMenuInputs()
+        {
+            if (currentKB != null)
+                previousKB = currentKB;
+
+            currentKB = Keyboard.GetState();
+
+            if(gameState == GameState.Start){
+                if(currentKB.IsKeyDown(Keys.Enter)){
+                    startGame();
+                }
+            }
+        }
+
+        private void handleInputs()
+        {
+            if (currentKB != null)
+                previousKB = currentKB;
+
+            currentKB = Keyboard.GetState();
+
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || currentKB.IsKeyDown(Keys.Escape))
+                Exit();
+            if (currentKB.IsKeyUp(Keys.P) && previousKB.IsKeyDown(Keys.P) && gameState == GameState.Paused)
+                gameState = GameState.Playing;
+            else if (currentKB.IsKeyUp(Keys.P) && previousKB.IsKeyDown(Keys.P) && gameState == GameState.Playing)
+                gameState = GameState.Paused;
+            if (gameState == GameState.Paused)
+                return;
+            if (gameState == GameState.Won && currentKB.IsKeyDown(Keys.R))
+            {
+                Initialize();
+                gameState = GameState.Start;
+                return;
+            }
+
+            if(gameState == GameState.Playing && currentKB.IsKeyDown(Keys.R)){
+
+
+                Initialize();
+                gameState = GameState.Start;
+            }
+            if (gameState == GameState.Paused && currentKB.IsKeyDown(Keys.R)){
+                Initialize();
+                gameState = GameState.Start;
+            }
         }
 
         private bool CheckCollisions()
@@ -219,16 +267,49 @@ namespace SnackAttack
 
             spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
-            spriteBatch.
-                       DrawString(font, getTimerText(), 
-                                   new Vector2(graphics.PreferredBackBufferWidth - (11*graphics.PreferredBackBufferWidth/12), 
-                                               graphics.PreferredBackBufferHeight - (11*graphics.PreferredBackBufferHeight/12)), Color.Black);
+            if(gameState == GameState.Start){
+                drawStartUI();
+            }
+
+            if (gameState == GameState.Playing)
+            {
+                drawGameUI();
+                drawGameActors();
+            }
+
+            if(gameState == GameState.Paused){
+                drawPauseUI();
+                drawGameUI();
+                drawGameActors();
+            }
+
+            if(gameState == GameState.Won){
+                drawGameActors();
+                drawGameUI();
+            }
+
+            spriteBatch.End();
+
+            base.Draw(gameTime);
+        }
+
+        private void drawStartUI(){
+
+            string welcomeMessage = "Welcome to Snake! \n Press Enter to Begin";
 
             spriteBatch.
-                       DrawString(font, "Speed: " + snake.getSpeed(),
-                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
-                                               graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
+                       DrawString(font, welcomeMessage,
+                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 200,
+                                               graphics.PreferredBackBufferHeight / 2), Color.Black);
+        }
+
+        private void drawPauseUI(){
+            spriteBatch.
+                           Draw(pause, pausePos, null, Color.White, 0f,
+                                new Vector2(pause.Width / 2, pause.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+        }
+
+        private void drawGameActors(){
 
             snake.DrawSnake(spriteBatch);
 
@@ -236,16 +317,19 @@ namespace SnackAttack
             mice.DrawMice(spriteBatch, win);
 
             DrawObstacles(spriteBatch);
+        }
 
-            if(gameState == GameState.Paused){
-                spriteBatch.
-                           Draw(pause, pausePos, null, Color.White, 0f,
-                                new Vector2(pause.Width / 2, pause.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-            }
+        private void drawGameUI()
+        {
+            spriteBatch.
+                       DrawString(font, getTimerText(),
+                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
+                                               graphics.PreferredBackBufferHeight - (11 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
 
-            spriteBatch.End();
-
-            base.Draw(gameTime);
+            spriteBatch.
+                       DrawString(font, "Speed: " + snake.getSpeed(),
+                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
+                                               graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
         }
 
         //keeps track of snake head bounding box
@@ -315,6 +399,12 @@ namespace SnackAttack
 
             for (int i = 0; i < obstacles.Count; i++)
                 obstacleBoxes.Add(new BoundingBox());
+        }
+
+        private void startGame(){
+
+            gameState = GameState.Playing;
+            Initialize();
         }
     }
 }
