@@ -38,8 +38,8 @@ namespace SnackAttack
         Vector2 mousePos;
         BoundingBox mouseBox;
 
-        TimeSpan timeSpan = TimeSpan.FromMilliseconds(31000); //30 sec in ms, extra second for startup :p
-        bool timeup = false;
+        TimeSpan timeSpan; //30 sec in ms, extra second for startup :p
+        bool timeup;
 
         KeyboardState currentKB, previousKB;
         private SpriteFont font;
@@ -80,6 +80,8 @@ namespace SnackAttack
             mousePos = new Vector2(initialX -150, initialY - 150);
 
             gameState = GameState.Playing;
+            timeSpan = TimeSpan.FromMilliseconds(31000);
+            timeup = false;
 
             base.Initialize();
         }
@@ -143,6 +145,11 @@ namespace SnackAttack
             if(gameState == GameState.Paused)
                 return;
 
+            if (gameState == GameState.Won && currentKB.IsKeyDown(Keys.R))
+            {
+                Initialize();
+                return;
+            }
 
 
             // TODO: Add your update logic here
@@ -268,7 +275,7 @@ namespace SnackAttack
             }
 
             else if(gameState == GameState.Won){
-                return "You Win!";
+                return "You Win! Press 'r' to restart.";
             }
 
             else{
