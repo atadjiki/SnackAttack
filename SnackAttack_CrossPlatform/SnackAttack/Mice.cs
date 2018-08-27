@@ -55,7 +55,13 @@ namespace SnackAttack.Desktop
             return miceBody;
         }
 
-        public Vector2 UpdateMicePosition(GameTime gameTime, GraphicsDeviceManager graphics, Vector2 headPosition)
+    /// <summary>
+    /// updates the mice position after every tick of game 
+    /// calculates where the mice needs to go after it reaches its location
+    /// </summary>
+    /// <param name = "gameTime"> which is snapshot of timing values
+    /// <param name = "headPosition"> gives the head position of the snake to run away from it
+        public Vector2 UpdateMicePosition(GameTime gameTime, Vector2 headPosition)
         {
             UpdateBoundingBox();
             float x_direction;

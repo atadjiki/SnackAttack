@@ -168,7 +168,7 @@ namespace SnackAttack
                     winCondition();
                     bool collision = CheckCollisions();
                     snake.UpdateSnakePositions(currentKB, gameTime, graphics, collision); //update snake 
-                    mousePos = mice.UpdateMicePosition(gameTime, graphics, snake.getHeadPosition());
+                    mousePos = mice.UpdateMicePosition(gameTime, snake.getHeadPosition());
                 }
             }
 
