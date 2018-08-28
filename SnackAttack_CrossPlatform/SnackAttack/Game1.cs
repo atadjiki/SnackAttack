@@ -51,6 +51,8 @@ namespace SnackAttack
         string timeUpMessage;
         string winMessage;
 
+        bool obstacleMode = false;
+
 
         public Game1()
         {
@@ -82,17 +84,17 @@ namespace SnackAttack
             initialY = graphics.PreferredBackBufferHeight / 2;
 
             mouseBox = new BoundingBox();
-            obstacleBoxes = new List<BoundingBox>();
             snake = new Snake(initialX, initialY);
             mice = new Mice(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
 
-            obstacles = new List<Vector2>();
-            InitializeObstacles();
+            if(obstacleMode){
+                obstacles = new List<Vector2>();
+                obstacleBoxes = new List<BoundingBox>();
+                InitializeObstacles();
+            }
+
             pausePos = new Vector2(graphics.PreferredBackBufferWidth - 100, graphics.PreferredBackBufferHeight - 100);
             mousePos = new Vector2(initialX - 150, initialY - 150);
-
-
-
 
             base.Initialize();
         }
@@ -113,7 +115,8 @@ namespace SnackAttack
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
-            obstacle = Content.Load<Texture2D>("brick");
+            if(obstacleMode)
+                obstacle = Content.Load<Texture2D>("brick");
 
             mouse = mice.loadMice(Content.Load<Texture2D>("mouse"));
 
@@ -174,7 +177,7 @@ namespace SnackAttack
         {
             ManageTimer(gameTime);
 
-            UpdateObstacleBoxes();
+          //  UpdateObstacleBoxes();
 
             mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
 
@@ -183,7 +186,13 @@ namespace SnackAttack
 
                 //check win
                 winCondition();
-                bool collision = CheckCollisions();
+                bool collision;
+
+                if(obstacleMode)
+                  collision=  CheckCollisions();
+                else
+                  collision = false;
+
                 snake.UpdateSnakePositions(currentKB, gameTime, graphics, collision); //update snake 
                 mousePos = mice.UpdateMicePosition(gameTime, snake.getHeadPosition());
             }
@@ -371,7 +380,8 @@ namespace SnackAttack
         private void drawGameActors()
         {
 
-            DrawObstacles(spriteBatch);
+            if(obstacleMode)
+                DrawObstacles(spriteBatch);
 
             snake.DrawSnake(spriteBatch);
 

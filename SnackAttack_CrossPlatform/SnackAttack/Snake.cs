@@ -119,59 +119,59 @@ namespace SnackAttack.Desktop
             bool allowHead = true;
 
             //cant move head and tail simultaneously 
-            if(kstate.IsKeyDown(Keys.LeftShift) && (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.S) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
-               && (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right)))
-            {
-                return;
-            }
+            //if(kstate.IsKeyDown(Keys.LeftShift) && (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.S) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
+            //   && (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right)))
+            //{
+            //    return;
+            //}
 
-            //if the tail moved last, and is currently being moved, and the snake is at max length, return 
-            if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.S) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
-            {
-                if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
-                {
-                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
-                    {
-                        allowHead = false;
-                    }
+            ////if the tail moved last, and is currently being moved, and the snake is at max length, return 
+            //if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.S) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
+            //{
+            //    if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
+            //    {
+            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
+            //        {
+            //            allowHead = false;
+            //        }
 
-                }
+            //    }
 
-            }
-            else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
-            {
-                if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
-                {
-                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
-                    {
-                        allowTail = false;
-                    }
-                }
+            //}
+            //else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
+            //{
+            //    if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
+            //    {
+            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
+            //        {
+            //            allowTail = false;
+            //        }
+            //    }
 
-            }
-            else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
-            {
-                if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
-                {
-                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
-                    {
-                        allowHead = true;
-                    }
+            //}
+            //else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
+            //{
+            //    if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
+            //    {
+            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
+            //        {
+            //            allowHead = true;
+            //        }
 
-                }
+            //    }
 
-            }
-            else if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.D) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
-            {
-                if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
-                {
-                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
-                    {
-                        allowTail = true;
-                    }
-                }
+            //}
+            //else if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.D) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
+            //{
+            //    if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
+            //    {
+            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
+            //        {
+            //            allowTail = true;
+            //        }
+            //    }
 
-            }
+            //}
 
 
 
