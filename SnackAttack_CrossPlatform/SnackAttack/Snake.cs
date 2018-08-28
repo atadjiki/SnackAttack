@@ -18,9 +18,7 @@ namespace SnackAttack.Desktop
         int spacing; //track every nth head positions (0 will look really mushed)
         int collisionModifier = 50;
         int slowdown = 5;
-        int travelCount;
-
-
+       
         bool up = false, down = false, left = false, right = false;
         bool noKeyPressed = true;
         bool tailMoving = false;
@@ -48,8 +46,6 @@ namespace SnackAttack.Desktop
             maxLength = 6;
             minLength = snakeLength; //must at minimum be snakelength
             spacing = 25;
-            travelCount = 0;
-
 
             snakeBody = new List<Texture2D>(snakeLength);
             positions = new List<Vector2>(snakeLength);
@@ -103,7 +99,7 @@ namespace SnackAttack.Desktop
         public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect)
         {
 
-            UpdateBoundingBox();
+            headBox = Collision.UpdateBoundingBox(headBox, headAsset, positions[0]);
             noKeyPressed = true;
             shrinkMode = false;
 
@@ -384,13 +380,13 @@ namespace SnackAttack.Desktop
         }
 
         //keeps track of snake head bounding box
-        public void UpdateBoundingBox()
-        {
-            this.headBox.Min.X = positions[0].X;
-            this.headBox.Min.Y = positions[0].Y;
-            this.headBox.Max.X = positions[0].X + snakeBody[0].Width;
-            this.headBox.Max.Y = positions[0].Y + snakeBody[0].Height;
-        }
+        //public void UpdateBoundingBox()
+        //{
+        //    this.headBox.Min.X = positions[0].X;
+        //    this.headBox.Min.Y = positions[0].Y;
+        //    this.headBox.Max.X = positions[0].X + snakeBody[0].Width;
+        //    this.headBox.Max.Y = positions[0].Y + snakeBody[0].Height;
+        //}
 
         public float getSpeed()
         {

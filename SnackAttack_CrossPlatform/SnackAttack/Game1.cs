@@ -25,10 +25,6 @@ namespace SnackAttack
         Mice mice;
 
 
-        Texture2D obstacle;
-        List<Vector2>obstacles;
-        List<BoundingBox> obstacleBoxes;
-
         Texture2D pause;
         Vector2 pausePos;
 
@@ -52,7 +48,7 @@ namespace SnackAttack
         string winMessage;
 
         bool obstacleMode = false;
-
+        Obstacles obstacles;
 
         public Game1()
         {
@@ -87,14 +83,11 @@ namespace SnackAttack
             snake = new Snake(initialX, initialY);
             mice = new Mice(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
 
-            if(obstacleMode){
-                obstacles = new List<Vector2>();
-                obstacleBoxes = new List<BoundingBox>();
-                InitializeObstacles();
-            }
-
             pausePos = new Vector2(graphics.PreferredBackBufferWidth - 100, graphics.PreferredBackBufferHeight - 100);
             mousePos = new Vector2(initialX - 150, initialY - 150);
+
+            if (obstacleMode)
+                obstacles = new Obstacles(Content.Load<Texture2D>("brick"));
 
             base.Initialize();
         }
@@ -115,8 +108,6 @@ namespace SnackAttack
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
-            if(obstacleMode)
-                obstacle = Content.Load<Texture2D>("brick");
 
             mouse = mice.loadMice(Content.Load<Texture2D>("mouse"));
 
@@ -177,9 +168,11 @@ namespace SnackAttack
         {
             ManageTimer(gameTime);
 
-          //  UpdateObstacleBoxes();
+            if(obstacleMode){
+                obstacles.UpdateObstacleBoxes();
+            }
 
-            mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
+            mouseBox = Collision.UpdateBoundingBox(mouseBox, mouse, mousePos);
 
             if (gameState != GameState.TimeUp)
             {
@@ -188,8 +181,8 @@ namespace SnackAttack
                 winCondition();
                 bool collision;
 
-                if(obstacleMode)
-                  collision=  CheckCollisions();
+                if (obstacleMode)
+                    collision = obstacles.checkCollision(snake.headBox);
                 else
                   collision = false;
 
@@ -246,32 +239,9 @@ namespace SnackAttack
             }
         }
 
-        private bool CheckCollisions()
-        {
-            bool collision = false;
-
-            for (int i = 0; i < obstacles.Count; i++){
-                if(doesIntersect(snake.headBox, obstacleBoxes[i])){
-                    collision = true;
-                    break;
-                }
-            }
-
-            return collision;
-        }
-
-        public bool doesIntersect(BoundingBox a, BoundingBox b){
-
-            bool intersect = a.Intersects(b);
-            if (intersect)
-                Console.WriteLine("Intersection at: " + a.Max + "," + b.Max);
-            return intersect;
-
-        }
-
         public void winCondition(){
 
-            if(doesIntersect(snake.headBox, mouseBox)){
+            if(Collision.doesIntersect(snake.headBox, mouseBox)){
                 gameState = GameState.Won;
             }
         }
@@ -381,7 +351,7 @@ namespace SnackAttack
         {
 
             if(obstacleMode)
-                DrawObstacles(spriteBatch);
+                obstacles.DrawObstacles(spriteBatch);
 
             snake.DrawSnake(spriteBatch);
 
@@ -391,40 +361,6 @@ namespace SnackAttack
 
         }
 
-        private void DrawObstacles(SpriteBatch spriteBatch)
-        {
-
-
-            foreach (Vector2 position in obstacles)
-            {
-
-                spriteBatch.
-                           Draw(obstacle, position, null, Color.White, 0f,
-                new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-            }
-
-
-        }
-
-        //keeps track of snake head bounding box
-        protected BoundingBox UpdateBoundingBox(BoundingBox box, Texture2D texture, Vector2 pos)
-        {
-            box.Min.X = pos.X;
-            box.Min.Y = pos.Y;
-            box.Max.X = pos.X + texture.Width;
-            box.Max.Y = pos.Y + texture.Height;
-
-            return box;
-        }
-
-        protected void UpdateObstacleBoxes()
-        {
-            for (int i = 0; i < obstacles.Count; i++){
-
-                obstacleBoxes[i] = UpdateBoundingBox(obstacleBoxes[i], obstacle, obstacles[i]);
-            }
-            
-        }
 
         public string getTimerText(){
 
@@ -443,33 +379,7 @@ namespace SnackAttack
 
         }
 
-        private void InitializeObstacles(){
-
-
-            //add obstacles here
-            for (int i = 0; i < 6; i++) 
-                obstacles.Add(new Vector2(600, 50 + (i * 50)));
-
-            for (int i = 0; i < 3; i++)
-                obstacles.Add(new Vector2(200 + (i * 50), 50));
-
-            for (int i = 0; i < 3; i++)
-                obstacles.Add(new Vector2(200 + (i * 50), 350));
-
-
-            //for (int i = 0; i < 4; i++)
-                //obstacles.Add(new Vector2(600, 250 + (i * 50)));
-
-            //for (int i = 0; i < 3; i++)
-            //    obstacles.Add(new Vector2(500, 150 + (i * 50)));
-
-
-
-
-            //dont modify this
-            for (int i = 0; i < obstacles.Count; i++)
-                obstacleBoxes.Add(new BoundingBox());
-        }
+       
 
         private void startGame(){
 
