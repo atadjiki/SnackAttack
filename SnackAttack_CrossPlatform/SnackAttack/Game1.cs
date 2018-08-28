@@ -39,7 +39,6 @@ namespace SnackAttack
         BoundingBox mouseBox;
 
         TimeSpan timeSpan; //30 sec in ms, extra second for startup :p
-        bool timeup;
 
         KeyboardState currentKB, previousKB;
         private SpriteFont font;
@@ -80,7 +79,6 @@ namespace SnackAttack
 
 
             timeSpan = TimeSpan.FromMilliseconds(31000);
-            timeup = false;
 
             base.Initialize();
         }
@@ -166,7 +164,7 @@ namespace SnackAttack
 
             mouseBox = UpdateBoundingBox(mouseBox, mouse, mousePos);
 
-            if (!timeup)
+            if (gameState != GameState.TimeUp)
             {
 
                 //check win
@@ -206,20 +204,20 @@ namespace SnackAttack
                 gameState = GameState.Paused;
             if (gameState == GameState.Paused)
                 return;
-            if (gameState == GameState.Won && currentKB.IsKeyDown(Keys.R))
-            {
+            if (gameState == GameState.Won && currentKB.IsKeyDown(Keys.R)){
                 Initialize();
                 gameState = GameState.Start;
                 return;
             }
-
             if(gameState == GameState.Playing && currentKB.IsKeyDown(Keys.R)){
-
-
                 Initialize();
                 gameState = GameState.Start;
             }
             if (gameState == GameState.Paused && currentKB.IsKeyDown(Keys.R)){
+                Initialize();
+                gameState = GameState.Start;
+            }
+            if(gameState == GameState.TimeUp && currentKB.IsKeyDown(Keys.R)){
                 Initialize();
                 gameState = GameState.Start;
             }
@@ -251,8 +249,6 @@ namespace SnackAttack
         public void winCondition(){
 
             if(doesIntersect(snake.headBox, mouseBox)){
-
-                timeup = true;
                 gameState = GameState.Won;
             }
         }
@@ -285,7 +281,12 @@ namespace SnackAttack
 
             if(gameState == GameState.Won){
                 drawGameActors();
-                drawGameUI();
+                drawWinUI();
+            }
+
+            if(gameState == GameState.TimeUp){
+                drawGameActors();
+                drawTimeUpUI();
             }
 
             spriteBatch.End();
@@ -299,7 +300,7 @@ namespace SnackAttack
 
             spriteBatch.
                        DrawString(font, welcomeMessage,
-                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 200,
+                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
                                                graphics.PreferredBackBufferHeight / 2), Color.Black);
         }
 
@@ -307,16 +308,6 @@ namespace SnackAttack
             spriteBatch.
                            Draw(pause, pausePos, null, Color.White, 0f,
                                 new Vector2(pause.Width / 2, pause.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-        }
-
-        private void drawGameActors(){
-
-            snake.DrawSnake(spriteBatch);
-
-            bool win = false; if (gameState == GameState.Won) win = true;
-            mice.DrawMice(spriteBatch, win);
-
-            DrawObstacles(spriteBatch);
         }
 
         private void drawGameUI()
@@ -330,6 +321,55 @@ namespace SnackAttack
                        DrawString(font, "Speed: " + snake.getSpeed(),
                                    new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
                                                graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
+        }
+
+        private void drawTimeUpUI(){
+
+            string timeUpMessage = "Time up! Press 'r' to Restart";
+
+            spriteBatch.
+                       DrawString(font, timeUpMessage,
+                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
+                                               graphics.PreferredBackBufferHeight / 2), Color.Black);
+
+        }
+
+        private void drawWinUI()
+        {
+
+            string winMessage = "You win! Press 'r' to Restart";
+
+            spriteBatch.
+                       DrawString(font, winMessage,
+                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
+                                               graphics.PreferredBackBufferHeight / 2), Color.Black);
+
+        }
+
+        private void drawGameActors()
+        {
+
+            snake.DrawSnake(spriteBatch);
+
+            bool win = false; if (gameState == GameState.Won) win = true;
+            mice.DrawMice(spriteBatch, win);
+
+            DrawObstacles(spriteBatch);
+        }
+
+        private void DrawObstacles(SpriteBatch spriteBatch)
+        {
+
+
+            foreach (Vector2 position in obstacles)
+            {
+
+                spriteBatch.
+                           Draw(obstacle, position, null, Color.White, 0f,
+                new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+            }
+
+
         }
 
         //keeps track of snake head bounding box
@@ -354,17 +394,21 @@ namespace SnackAttack
 
         public string getTimerText(){
 
-            if(!timeup && gameState != GameState.Won){
+            if (gameState != GameState.Won)
+            {
                 return "Time: " + timeSpan.Seconds.ToString();
             }
 
-            else if(gameState == GameState.Won){
-                return "You Win! Press 'r' to restart.";
-            }
+            //else if (gameState == GameState.Won)
+            //{
+            //    return "You Win! Press 'r' to restart.";
+            //}
 
-            else{
-                return "Timeup!";
-            }
+            //else if (gameState == GameState.TimeUp)
+            //{
+            //    return "Timeup!";
+            //}
+            else return "";
         }
 
         private void ManageTimer(GameTime gameTime){
@@ -373,22 +417,9 @@ namespace SnackAttack
             if (timeSpan < TimeSpan.Zero)
 
             {
-                timeup = true;
+                gameState = GameState.TimeUp;
 
             }
-
-        }
-
-        private void DrawObstacles(SpriteBatch spriteBatch){
-
-
-            foreach(Vector2 position in obstacles){
-
-                spriteBatch.
-                           Draw(obstacle, position, null, Color.White, 0f,
-                new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-            }
-
 
         }
 
