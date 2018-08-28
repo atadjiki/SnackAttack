@@ -45,7 +45,7 @@ namespace SnackAttack.Desktop
             snakeSpeed = 100f;
             maxSpeed = snakeSpeed;
             snakeLength = 2; //must always have at least a head and tail!
-            maxLength = 5;
+            maxLength = 6;
             minLength = snakeLength; //must at minimum be snakelength
             spacing = 25;
             travelCount = 0;
@@ -406,7 +406,7 @@ namespace SnackAttack.Desktop
         {
 
 
-            float maxDistance = 3f * bodyAsset.Width;
+            float maxDistance = 3.5f * bodyAsset.Width;
             float distance = Vector2.Distance(head, tail);
 
             if (distance > maxDistance)

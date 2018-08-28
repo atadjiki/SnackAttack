@@ -359,12 +359,14 @@ namespace SnackAttack
         private void drawGameActors()
         {
 
+            DrawObstacles(spriteBatch);
+
             snake.DrawSnake(spriteBatch);
 
             bool win = false; if (gameState == GameState.Won) win = true;
             mice.DrawMice(spriteBatch, win);
 
-            DrawObstacles(spriteBatch);
+
         }
 
         private void DrawObstacles(SpriteBatch spriteBatch)
@@ -424,10 +426,13 @@ namespace SnackAttack
 
             //add obstacles here
             for (int i = 0; i < 3; i++) 
-                obstacles.Add(new Vector2(300, 100 + (i * 50)));
+                obstacles.Add(new Vector2(200, 100 + (i * 50)));
 
             for (int i = 0; i < 3; i++)
-                obstacles.Add(new Vector2(600, 200 + (i * 50)));
+                obstacles.Add(new Vector2(500, 100 + (i * 50)));
+
+            for (int i = 0; i < 5; i++)
+                obstacles.Add(new Vector2(200+ (i * 50), 400 ));
 
 
             //dont modify this

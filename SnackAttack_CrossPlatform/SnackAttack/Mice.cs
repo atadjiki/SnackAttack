@@ -25,7 +25,7 @@ namespace SnackAttack.Desktop
         private float xOffset = 50f;
         private float yOffset = 50f;
         private Vector2 gotoLocation;
-        private int index = 2;
+        private int index = 1;
         private int previousIndex;
 
 
