@@ -422,9 +422,14 @@ namespace SnackAttack.Desktop
 
         }
 
+        public float getDistance(){
+
+
+          return Vector2.Distance(positions[0], positions[positions.Count -1]);
+        }
+
         private void repopulatePreviousPositions()
         {
-
 
 
             if (previousPositions.Count >= positions.Count * spacing)
