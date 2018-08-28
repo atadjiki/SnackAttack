@@ -338,11 +338,7 @@ namespace SnackAttack
                                                graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.White);
 
             spriteBatch.
-<<<<<<< HEAD
-                       DrawString(font, "Length: " + snake.getDistance(),
-=======
                        DrawString(font, "Length: " + snake.getSnakeDistance(),
->>>>>>> 6718fa463b27f1126f870f14be34b4adb227eca8
                                    new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
                                                graphics.PreferredBackBufferHeight - (9 * graphics.PreferredBackBufferHeight / 12)), Color.White);
         }
@@ -361,11 +357,10 @@ namespace SnackAttack
 
             TimeSpan winTime = new TimeSpan(0, 0, time);
 
-<<<<<<< HEAD
-            winMessage = "You win! Press 'r' to Restart";
-=======
+
+
             winMessage = "You win! Time: " + (winTime.Seconds - timeSpan.Seconds).ToString() + " seconds. Press 'r' to Restart";
->>>>>>> 6718fa463b27f1126f870f14be34b4adb227eca8
+
             spriteBatch.
                        DrawString(font, winMessage,
                                    new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
