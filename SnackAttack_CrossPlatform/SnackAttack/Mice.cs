@@ -110,11 +110,11 @@ namespace SnackAttack.Desktop
                         difference += 50;
                         if (difference >= 0) {
                             if (previousIndex == 1) {
-                                index = 0;
+                                index = 2;
                             }
                         } else {
                             if (previousIndex == 1) {
-                                index = 2;
+                                index = 0;
                             }
                         }
                     } else {
@@ -122,6 +122,8 @@ namespace SnackAttack.Desktop
                         if (difference >= 0) {
                             if (previousIndex == 2) {
                                 index = 1;
+                            } else if(index == 1) {
+                                index = 2;
                             }
                         } else {
                             if (previousIndex == 2) {
