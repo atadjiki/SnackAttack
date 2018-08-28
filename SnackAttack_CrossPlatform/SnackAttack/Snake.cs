@@ -16,7 +16,7 @@ namespace SnackAttack.Desktop
         int maxLength;
         int minLength;
         int spacing; //track every nth head positions (0 will look really mushed)
-        int collisionModifier = 100;
+        int collisionModifier = 50;
         int slowdown = 5;
         int travelCount;
 
@@ -36,7 +36,7 @@ namespace SnackAttack.Desktop
         Texture2D bodyAsset;
         Texture2D tailAsset;
 
-        KeyboardState previousKB; 
+        KeyboardState previousKB;
 
 
 
@@ -66,21 +66,24 @@ namespace SnackAttack.Desktop
 
         }
 
-        public void growSnake(int amount, Vector2 position){
+        public void growSnake(int amount, Vector2 position)
+        {
 
-            positions.Insert(positions.Count-1, position);
+            positions.Insert(positions.Count - 1, position);
             snakeBody.Insert(positions.Count - 2, bodyAsset);
 
 
         }
 
-        public void shrinkSnake(){
+        public void shrinkSnake()
+        {
             positions.RemoveAt(positions.Count - 1);
 
         }
 
-        public Vector2 getHeadPosition(){
-          return positions[0];
+        public Vector2 getHeadPosition()
+        {
+            return positions[0];
         }
 
         public void loadSnake(Texture2D head, Texture2D body, Texture2D tail)
@@ -112,8 +115,66 @@ namespace SnackAttack.Desktop
             //if the head is moving but the snake has reached max lenghth, we need to disallow further movement of the head
             //UNTIL the user switches controls
 
+            bool allowTail = true;
+            bool allowHead = true;
+
+            //cant move head and tail simultaneously 
+            if(kstate.IsKeyDown(Keys.LeftShift) && (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.S) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
+               && (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right)))
+            {
+                return;
+            }
+
             //if the tail moved last, and is currently being moved, and the snake is at max length, return 
-        
+            if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.S) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
+            {
+                if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
+                {
+                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
+                    {
+                        allowHead = false;
+                    }
+
+                }
+
+            }
+            else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
+            {
+                if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
+                {
+                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
+                    {
+                        allowTail = false;
+                    }
+                }
+
+            }
+            else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
+            {
+                if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
+                {
+                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
+                    {
+                        allowHead = true;
+                    }
+
+                }
+
+            }
+            else if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.D) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
+            {
+                if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
+                {
+                    if (!checkDistance(positions[0], positions[positions.Count - 1]))
+                    {
+                        allowTail = true;
+                    }
+                }
+
+            }
+
+
+
 
 
 
@@ -121,13 +182,14 @@ namespace SnackAttack.Desktop
             {
 
                 //if moving tail, reverse the previousposition queue if switching from front of snake
-                if (!tailMoving){
+                if (!tailMoving)
+                {
 
                     positions.Reverse();
                     repopulatePreviousPositions();
                     snakeBody.Reverse();
                 }
-                    
+
 
                 tailMoving = true;
                 noKeyPressed = false;
@@ -135,27 +197,31 @@ namespace SnackAttack.Desktop
             else if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.S) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
             {
 
-                if (tailMoving){
-                   
+                if (tailMoving)
+                {
+
                     positions.Reverse();
                     repopulatePreviousPositions();
                     snakeBody.Reverse();
                 }
-                    
+
                 tailMoving = false;
                 noKeyPressed = false;
             }
-            else if(kstate.IsKeyDown(Keys.LeftShift) || kstate.IsKeyDown(Keys.LeftShift)){
+            else if (kstate.IsKeyDown(Keys.LeftShift) || kstate.IsKeyDown(Keys.LeftShift))
+            {
                 shrinkMode = true;
             }
             if (noKeyPressed && !shrinkMode)
                 return;
-               
+
 
             //dont change any positions if the snake isnt moving 
             else if (!noKeyPressed || shrinkMode)
             {
+                if((tailMoving && allowTail) || (!tailMoving && allowHead)){
 
+                
                 //are we moving the head or the tail now?
                 var head = positions[0];
 
@@ -229,10 +295,8 @@ namespace SnackAttack.Desktop
                     }
                 }
 
-                if (checkDistance(head, positions[positions.Count - 1]))
-                {
 
-                    previousPositions.Insert(0, lastPreviousPosition);
+                previousPositions.Insert(0, lastPreviousPosition);
 
                 //this stops the snake from moving out of the screen :)
                 head.X = Math.Min(Math.Max(headAsset.Width / 2, head.X), graphics.PreferredBackBufferWidth - headAsset.Width / 2);
@@ -241,7 +305,7 @@ namespace SnackAttack.Desktop
                 //check collision, if this move is allowed, store the position - if not, stay where we are!
                 if (doesIntersect)
                 {
-                
+
                     snakeSpeed = snakeSpeed / slowdown;
 
                     Console.WriteLine("Speed: " + snakeSpeed);
@@ -249,7 +313,7 @@ namespace SnackAttack.Desktop
                     if (up)
                     {
                         head.Y += collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                        
+
                     }
                     else if (down)
                     {
@@ -265,58 +329,50 @@ namespace SnackAttack.Desktop
                     }
                 }
 
-                if(snakeSpeed < maxSpeed){
+                if (snakeSpeed < maxSpeed)
+                {
                     snakeSpeed++;
                 }
 
 
-                    positions[0] = head;
+                positions[0] = head;
 
-                    // loop through list, set positions for all nodes while incrementing positions
-                    for (int i = 1; i < positions.Count; i++)
+                // loop through list, set positions for all nodes while incrementing positions
+                for (int i = 1; i < positions.Count; i++)
+                {
+
+                    //set position
+                    Vector2 temp = positions[i];
+
+                    if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
                     {
-
-                        //set position
-                        Vector2 temp = positions[i];
-
-                        if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
-                        {
-                            temp = previousPositions.ToArray()[i * spacing];
-                        }
-
-                        //store back in list
-                        positions[i] = temp;
-
-
-
+                        temp = previousPositions.ToArray()[i * spacing];
                     }
 
-                    //if there is room to grow, and the head has moved enough, increment snake 
-                    if (previousPositions.Count > spacing * positions.Count && positions.Count <= maxLength)
-                    {
+                    //store back in list
+                    positions[i] = temp;
 
-                        Vector2 position = positions[positions.Count - 1];
-                        growSnake(1, position);
-                        snakeLength++;
-                    }
                 }
 
-
-
-
-
+                //if there is room to grow, and the head has moved enough, increment snake 
+                if (previousPositions.Count > spacing * positions.Count && positions.Count <= maxLength)
+                {
+                    Vector2 position = positions[positions.Count - 1];
+                    growSnake(1, position);
+                    snakeLength++;
+                }
 
             }
 
-
-
             previousKB = kstate;
+
+            }
         }
 
         public void DrawSnake(SpriteBatch spriteBatch)
         {
             //draw all snake nodes
-   
+
 
             for (int i = 0; i < positions.Count; i++)
             {
@@ -336,37 +392,42 @@ namespace SnackAttack.Desktop
             this.headBox.Max.Y = positions[0].Y + snakeBody[0].Height;
         }
 
-        public float getSpeed(){
+        public float getSpeed()
+        {
             return snakeSpeed;
         }
 
-        public int getSnakeLength(){
+        public int getSnakeLength()
+        {
             return positions.Count;
         }
 
-        public bool checkDistance(Vector2 head, Vector2 tail){
-       
+        public bool checkDistance(Vector2 head, Vector2 tail)
+        {
 
-            float maxDistance = 2.5f * bodyAsset.Width;
+
+            float maxDistance = 3f * bodyAsset.Width;
             float distance = Vector2.Distance(head, tail);
 
-            if (distance > maxDistance){
+            if (distance > maxDistance)
+            {
                 Console.WriteLine("Snake too long! " + distance);
                 return false;
             }
-                
+
             else
             {
                 return true;
             }
-        
+
         }
 
-        private void repopulatePreviousPositions(){
+        private void repopulatePreviousPositions()
+        {
 
 
 
-            if(previousPositions.Count >= positions.Count * spacing)
+            if (previousPositions.Count >= positions.Count * spacing)
                 previousPositions = previousPositions.GetRange(0, positions.Count * spacing);
 
             previousPositions.Reverse();

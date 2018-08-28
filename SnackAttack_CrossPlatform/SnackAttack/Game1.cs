@@ -46,6 +46,11 @@ namespace SnackAttack
         enum GameState{ Start, Playing, Paused, Won, TimeUp};
         GameState gameState;
 
+        string welcomeMessage =
+            "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n shift - shrink \n wasd - control head \n arrow keys - control tail";
+        string timeUpMessage = "Time up! Press 'r' to Restart";
+        string winMessage = "You win! Press 'r' to Restart";
+
 
         public Game1()
         {
@@ -99,7 +104,7 @@ namespace SnackAttack
             //load snake assets
             snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
 
-            obstacle = Content.Load<Texture2D>("redball");
+            obstacle = Content.Load<Texture2D>("brick");
 
             mouse = mice.loadMice(Content.Load<Texture2D>("mouse"));
 
@@ -296,12 +301,12 @@ namespace SnackAttack
 
         private void drawStartUI(){
 
-            string welcomeMessage = "Welcome to Snake! \n Press Enter to Begin";
+
 
             spriteBatch.
                        DrawString(font, welcomeMessage,
-                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
-                                               graphics.PreferredBackBufferHeight / 2), Color.Black);
+                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 100,
+                                               graphics.PreferredBackBufferHeight / 2 -75), Color.White);
         }
 
         private void drawPauseUI(){
@@ -315,39 +320,39 @@ namespace SnackAttack
             spriteBatch.
                        DrawString(font, getTimerText(),
                                    new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
-                                               graphics.PreferredBackBufferHeight - (11 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
+                                               graphics.PreferredBackBufferHeight - (11 * graphics.PreferredBackBufferHeight / 12)), Color.White);
 
             spriteBatch.
                        DrawString(font, "Speed: " + snake.getSpeed(),
                                    new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
-                                               graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
+                                               graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.White);
 
             spriteBatch.
                        DrawString(font, "Length: " + snake.getSnakeLength(),
                                    new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
-                                               graphics.PreferredBackBufferHeight - (9 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
+                                               graphics.PreferredBackBufferHeight - (9 * graphics.PreferredBackBufferHeight / 12)), Color.White);
         }
 
         private void drawTimeUpUI(){
 
-            string timeUpMessage = "Time up! Press 'r' to Restart";
+
 
             spriteBatch.
                        DrawString(font, timeUpMessage,
                                    new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
-                                               graphics.PreferredBackBufferHeight / 2), Color.Black);
+                                               graphics.PreferredBackBufferHeight / 2), Color.White);
 
         }
 
         private void drawWinUI()
         {
 
-            string winMessage = "You win! Press 'r' to Restart";
+
 
             spriteBatch.
                        DrawString(font, winMessage,
                                    new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
-                                               graphics.PreferredBackBufferHeight / 2), Color.Black);
+                                               graphics.PreferredBackBufferHeight / 2), Color.White);
 
         }
 
@@ -416,9 +421,16 @@ namespace SnackAttack
 
         private void InitializeObstacles(){
 
-            obstacles.Add(new Vector2(initialX + 150, initialY - 200));
+
+            //add obstacles here
+            for (int i = 0; i < 3; i++) 
+                obstacles.Add(new Vector2(300, 100 + (i * 50)));
+
+            for (int i = 0; i < 3; i++)
+                obstacles.Add(new Vector2(600, 200 + (i * 50)));
 
 
+            //dont modify this
             for (int i = 0; i < obstacles.Count; i++)
                 obstacleBoxes.Add(new BoundingBox());
         }
