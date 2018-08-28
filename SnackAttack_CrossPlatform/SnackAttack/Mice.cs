@@ -168,10 +168,10 @@ namespace SnackAttack.Desktop
 
         public void DrawMice(SpriteBatch spriteBatch, bool win)
         {
-            if (!win)
-            {
+           // if (!win)
+           // {
                 spriteBatch.Draw(miceBody, this.miceLocation, null, Color.White, 0f, new Vector2(miceBody.Width / 2, miceBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
-            }
+          //  }
         }
 
         protected void UpdateBoundingBox()

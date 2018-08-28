@@ -39,6 +39,7 @@ namespace SnackAttack
         BoundingBox mouseBox;
 
         TimeSpan timeSpan; //30 sec in ms, extra second for startup :p
+        int time = 31000;
 
         KeyboardState currentKB, previousKB;
         private SpriteFont font;
@@ -46,10 +47,9 @@ namespace SnackAttack
         enum GameState{ Start, Playing, Paused, Won, TimeUp};
         GameState gameState;
 
-        string welcomeMessage =
-            "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n shift - shrink \n wasd - control head \n arrow keys - control tail";
-        string timeUpMessage = "Time up! Press 'r' to Restart";
-        string winMessage = "You win! Press 'r' to Restart";
+        string welcomeMessage;
+        string timeUpMessage;
+        string winMessage;
 
 
         public Game1()
@@ -69,6 +69,15 @@ namespace SnackAttack
         /// </summary>
         protected override void Initialize()
         {
+
+            timeSpan = TimeSpan.FromMilliseconds(time);
+
+            welcomeMessage =
+            "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n shift - shrink \n wasd - control head \n arrow keys - control tail";
+
+            timeUpMessage = "Time up! Press 'r' to Restart";
+
+
             initialX = graphics.PreferredBackBufferWidth / 2; //get middle of the screen 
             initialY = graphics.PreferredBackBufferHeight / 2;
 
@@ -83,7 +92,7 @@ namespace SnackAttack
             mousePos = new Vector2(initialX - 150, initialY - 150);
 
 
-            timeSpan = TimeSpan.FromMilliseconds(31000);
+
 
             base.Initialize();
         }
@@ -274,14 +283,15 @@ namespace SnackAttack
 
             if (gameState == GameState.Playing)
             {
-                drawGameUI();
+
                 drawGameActors();
+                drawGameUI();
             }
 
             if(gameState == GameState.Paused){
                 drawPauseUI();
-                drawGameUI();
                 drawGameActors();
+                drawGameUI();
             }
 
             if(gameState == GameState.Won){
@@ -348,7 +358,7 @@ namespace SnackAttack
         {
 
 
-
+            winMessage = "You win! Time: " + (time - timeSpan.Seconds).ToString() + " seconds. Press 'r' to Restart";
             spriteBatch.
                        DrawString(font, winMessage,
                                    new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
@@ -425,14 +435,23 @@ namespace SnackAttack
 
 
             //add obstacles here
-            for (int i = 0; i < 3; i++) 
-                obstacles.Add(new Vector2(200, 100 + (i * 50)));
+            for (int i = 0; i < 6; i++) 
+                obstacles.Add(new Vector2(600, 50 + (i * 50)));
 
             for (int i = 0; i < 3; i++)
-                obstacles.Add(new Vector2(500, 100 + (i * 50)));
+                obstacles.Add(new Vector2(200 + (i * 50), 50));
 
-            for (int i = 0; i < 5; i++)
-                obstacles.Add(new Vector2(200+ (i * 50), 400 ));
+            for (int i = 0; i < 3; i++)
+                obstacles.Add(new Vector2(200 + (i * 50), 350));
+
+
+            //for (int i = 0; i < 4; i++)
+                //obstacles.Add(new Vector2(600, 250 + (i * 50)));
+
+            //for (int i = 0; i < 3; i++)
+            //    obstacles.Add(new Vector2(500, 150 + (i * 50)));
+
+
 
 
             //dont modify this
