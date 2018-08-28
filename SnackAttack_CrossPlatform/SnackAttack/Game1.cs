@@ -78,7 +78,7 @@ namespace SnackAttack
             timeUpMessage = "Time up! Press 'r' to Restart";
 
 
-            initialX = graphics.PreferredBackBufferWidth / 2; //get middle of the screen 
+            initialX = (graphics.PreferredBackBufferWidth / 2) - 150; //get middle of the screen 
             initialY = graphics.PreferredBackBufferHeight / 2;
 
             mouseBox = new BoundingBox();
@@ -344,8 +344,6 @@ namespace SnackAttack
         }
 
         private void drawTimeUpUI(){
-
-
 
             spriteBatch.
                        DrawString(font, timeUpMessage,
