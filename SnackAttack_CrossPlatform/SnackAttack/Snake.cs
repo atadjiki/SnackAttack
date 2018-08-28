@@ -397,6 +397,11 @@ namespace SnackAttack.Desktop
             return snakeSpeed;
         }
 
+        public float getSnakeDistance()
+        {
+            return Vector2.Distance(positions[0],positions[positions.Count - 1]);
+        }
+
         public int getSnakeLength()
         {
             return positions.Count;
