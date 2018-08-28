@@ -14,16 +14,17 @@ namespace SnackAttack.Desktop
 
         int snakeLength; // maximum amnount of snake nodes, including head
         int maxLength;
-     //   int minLength;
+        int minLength;
         int spacing; //track every nth head positions (0 will look really mushed)
         int collisionModifier = 100;
         int slowdown = 5;
+        int travelCount;
 
 
         bool up = false, down = false, left = false, right = false;
         bool noKeyPressed = true;
         bool tailMoving = false;
-        bool coilMode = false;
+        bool shrinkMode = false;
 
         List<Vector2> previousPositions;
         List<Vector2> positions;
@@ -35,6 +36,8 @@ namespace SnackAttack.Desktop
         Texture2D bodyAsset;
         Texture2D tailAsset;
 
+        KeyboardState previousKB; 
+
 
 
         public Snake(float initialX, float initialY)
@@ -43,8 +46,9 @@ namespace SnackAttack.Desktop
             maxSpeed = snakeSpeed;
             snakeLength = 2; //must always have at least a head and tail!
             maxLength = 5;
-            //minLength = 2;
+            minLength = snakeLength; //must at minimum be snakelength
             spacing = 25;
+            travelCount = 0;
 
 
             snakeBody = new List<Texture2D>(snakeLength);
@@ -76,7 +80,7 @@ namespace SnackAttack.Desktop
         }
 
         public Vector2 getHeadPosition(){
-            return positions[0];
+          return positions[0];
         }
 
         public void loadSnake(Texture2D head, Texture2D body, Texture2D tail)
@@ -98,12 +102,20 @@ namespace SnackAttack.Desktop
 
             UpdateBoundingBox();
             noKeyPressed = true;
-            coilMode = false;
+            shrinkMode = false;
 
 
             //the snake shouldnt move if no key is being pressed
             //also, depending on what key is pressed the head is either the first or last node
             //and the previous positions list should be reversed if moving the tail
+
+            //if the head is moving but the snake has reached max lenghth, we need to disallow further movement of the head
+            //UNTIL the user switches controls
+
+            //if the tail moved last, and is currently being moved, and the snake is at max length, return 
+        
+
+
 
             if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
             {
@@ -134,13 +146,14 @@ namespace SnackAttack.Desktop
                 noKeyPressed = false;
             }
             else if(kstate.IsKeyDown(Keys.LeftShift) || kstate.IsKeyDown(Keys.LeftShift)){
-                coilMode = true;
+                shrinkMode = true;
             }
-            if (noKeyPressed && !coilMode)
+            if (noKeyPressed && !shrinkMode)
                 return;
+               
 
             //dont change any positions if the snake isnt moving 
-            if (!noKeyPressed || coilMode)
+            else if (!noKeyPressed || shrinkMode)
             {
 
                 //are we moving the head or the tail now?
@@ -216,7 +229,10 @@ namespace SnackAttack.Desktop
                     }
                 }
 
-                previousPositions.Insert(0, lastPreviousPosition);
+                if (checkDistance(head, positions[positions.Count - 1]))
+                {
+
+                    previousPositions.Insert(0, lastPreviousPosition);
 
                 //this stops the snake from moving out of the screen :)
                 head.X = Math.Min(Math.Max(headAsset.Width / 2, head.X), graphics.PreferredBackBufferWidth - headAsset.Width / 2);
@@ -253,41 +269,48 @@ namespace SnackAttack.Desktop
                     snakeSpeed++;
                 }
 
-                positions[0] = head;
 
+                    positions[0] = head;
 
-                // loop through list, set positions for all nodes while incrementing positions
-                for (int i = 1; i < snakeLength; i++)
-                {
-
-                    //set position
-                    Vector2 temp = positions[i];
-
-                    if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
+                    // loop through list, set positions for all nodes while incrementing positions
+                    for (int i = 1; i < positions.Count; i++)
                     {
-                        temp = previousPositions.ToArray()[i * spacing];
+
+                        //set position
+                        Vector2 temp = positions[i];
+
+                        if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
+                        {
+                            temp = previousPositions.ToArray()[i * spacing];
+                        }
+
+                        //store back in list
+                        positions[i] = temp;
+
+
+
                     }
 
-                    //store back in list
-                    positions[i] = temp;
+                    //if there is room to grow, and the head has moved enough, increment snake 
+                    if (previousPositions.Count > spacing * positions.Count && positions.Count <= maxLength)
+                    {
 
+                        Vector2 position = positions[positions.Count - 1];
+                        growSnake(1, position);
+                        snakeLength++;
+                    }
                 }
 
-                //if there is room to grow, and the head has moved enough, increment snake 
-                if (previousPositions.Count > spacing * positions.Count && positions.Count <= maxLength)
-                {
 
-                    Vector2 position = positions[positions.Count-1];
-                    growSnake(1, position);
-                    snakeLength++;
-                }
-                else if(snakeLength==maxLength){
-                    //stop snake until opposite moves
-                }
+
+
 
 
             }
 
+
+
+            previousKB = kstate;
         }
 
         public void DrawSnake(SpriteBatch spriteBatch)
@@ -295,7 +318,7 @@ namespace SnackAttack.Desktop
             //draw all snake nodes
    
 
-            for (int i = 0; i < snakeLength; i++)
+            for (int i = 0; i < positions.Count; i++)
             {
 
                 spriteBatch.
@@ -315,6 +338,28 @@ namespace SnackAttack.Desktop
 
         public float getSpeed(){
             return snakeSpeed;
+        }
+
+        public int getSnakeLength(){
+            return positions.Count;
+        }
+
+        public bool checkDistance(Vector2 head, Vector2 tail){
+       
+
+            float maxDistance = 2.5f * bodyAsset.Width;
+            float distance = Vector2.Distance(head, tail);
+
+            if (distance > maxDistance){
+                Console.WriteLine("Snake too long! " + distance);
+                return false;
+            }
+                
+            else
+            {
+                return true;
+            }
+        
         }
 
         private void repopulatePreviousPositions(){

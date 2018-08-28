@@ -321,6 +321,11 @@ namespace SnackAttack
                        DrawString(font, "Speed: " + snake.getSpeed(),
                                    new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
                                                graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
+
+            spriteBatch.
+                       DrawString(font, "Length: " + snake.getSnakeLength(),
+                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
+                                               graphics.PreferredBackBufferHeight - (9 * graphics.PreferredBackBufferHeight / 12)), Color.Black);
         }
 
         private void drawTimeUpUI(){
@@ -394,21 +399,7 @@ namespace SnackAttack
 
         public string getTimerText(){
 
-            if (gameState != GameState.Won)
-            {
-                return "Time: " + timeSpan.Seconds.ToString();
-            }
-
-            //else if (gameState == GameState.Won)
-            //{
-            //    return "You Win! Press 'r' to restart.";
-            //}
-
-            //else if (gameState == GameState.TimeUp)
-            //{
-            //    return "Timeup!";
-            //}
-            else return "";
+            return "Time: " + timeSpan.Seconds.ToString();
         }
 
         private void ManageTimer(GameTime gameTime){
