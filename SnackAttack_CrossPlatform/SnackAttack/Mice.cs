@@ -84,8 +84,12 @@ namespace SnackAttack.Desktop
     /// </summary>
     /// <param name = "gameTime"> which is snapshot of timing values
     /// <param name = "headPosition"> gives the head position of the snake to run away from it
-        public Vector2 UpdateMicePosition(GameTime gameTime)
+        public Vector2 UpdateMicePosition(GameTime gameTime, bool snakeMouseCollision)
         {
+
+            if(snakeMouseCollision)
+                return new Vector2(GraphicsManager.Instance.getInitialX(), GraphicsManager.Instance.getInitialY());
+
             float x_direction;
             float y_direction;
             int xPercent;

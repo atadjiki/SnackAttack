@@ -143,21 +143,19 @@ namespace SnackAttack
 
                 //check win
                 winCondition();
-                miceSnakeCollision();
-                bool collision;
+                bool snakeMouseCollision = miceSnakeCollision();
+
+                bool obstacleCollision;
 
                 if (Variables.obstacleMode)
-                    collision = Obstacles.Instance.checkCollision();
+                    obstacleCollision = Obstacles.Instance.checkCollision();
                 else{
-
-                    //check collision between mouse and snake body
-
-                    collision = false;
+                    obstacleCollision = false;
                 }
                   
 
-                Snake.Instance.UpdateSnakePositions(currentKB, gameTime, GraphicsManager.Instance.GetGraphics(), collision); //update snake 
-                Mice.Instance.mousePos = Mice.Instance.UpdateMicePosition(gameTime);
+                Snake.Instance.UpdateSnakePositions(currentKB, gameTime, GraphicsManager.Instance.GetGraphics(), obstacleCollision); //update snake 
+                Mice.Instance.mousePos = Mice.Instance.UpdateMicePosition(gameTime, snakeMouseCollision);
             }
         }
 
