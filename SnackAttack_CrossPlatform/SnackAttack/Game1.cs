@@ -156,6 +156,7 @@ namespace SnackAttack
 
                 Snake.Instance.UpdateSnakePositions(currentKB, gameTime, GraphicsManager.Instance.GetGraphics(), obstacleCollision); //update snake 
                 Mice.Instance.mousePos = Mice.Instance.UpdateMicePosition(gameTime, snakeMouseCollision);
+                snakeMouseCollision = false;
             }
         }
 
@@ -225,7 +226,7 @@ namespace SnackAttack
                     {
                         collision = true;
                         Console.WriteLine("Mouse collided with snake body at " + box.Max + ", " + box.Min);
-                        break;
+                        return collision;
                     }
                 }
 
