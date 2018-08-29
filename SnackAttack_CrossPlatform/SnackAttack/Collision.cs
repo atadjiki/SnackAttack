@@ -27,21 +27,42 @@ namespace SnackAttack.Desktop
             return box;
         }
 
-        public static bool CheckCollisions(BoundingBox headBox, List<Vector2> vectors, List<BoundingBox> boxes)
+        //public static bool CheckCollisions(BoundingBox headBox, List<Vector2> vectors, List<BoundingBox> boxes)
+        //{
+        //    bool collision = false;
+
+        //    for (int i = 0; i < vectors.Count; i++)
+        //    {
+        //        if (doesIntersect(headBox, boxes[i]))
+        //        {
+        //            collision = true;
+        //            break;
+        //        }
+        //    }
+
+        //    return collision;
+        //}
+
+        public static bool CheckCollisions(List<BoundingBox> boxesA, List<Vector2> vectorsB, List<BoundingBox> boxesB)
         {
             bool collision = false;
 
-            for (int i = 0; i < vectors.Count; i++)
+            for (int i = 0; i < vectorsB.Count; i++)
             {
-                if (doesIntersect(headBox, boxes[i]))
-                {
-                    collision = true;
-                    break;
+                foreach(BoundingBox box in boxesA){
+
+                    if (doesIntersect(box, boxesB[i]))
+                    {
+                        collision = true;
+                        break;
+                    }
                 }
+
             }
 
             return collision;
         }
+
     }
 
 }

@@ -66,7 +66,7 @@ namespace SnackAttack.Desktop
         }
 
         public bool checkCollision(){
-            return Collision.CheckCollisions(Snake.Instance.headBox, obstacles, obstacleBoxes);
+            return Collision.CheckCollisions(Snake.Instance.getSnakeBoxes(), obstacles, obstacleBoxes);
         }
 
         public List<Vector2> getPositions(){

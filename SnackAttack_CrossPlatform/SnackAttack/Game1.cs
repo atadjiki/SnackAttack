@@ -63,16 +63,16 @@ namespace SnackAttack
         {
 
             GraphicsManager.Instance.LoadContent();
-            GraphicsManager.Instance.font = Content.Load<SpriteFont>("Timer");
-            GraphicsManager.Instance.pause = Content.Load<Texture2D>("pause");
+            GraphicsManager.Instance.font = Content.Load<SpriteFont>(Variables.timer);
+            GraphicsManager.Instance.pause = Content.Load<Texture2D>(Variables.pause);
             GraphicsManager.Instance.pausePos = new Vector2(GraphicsManager.Instance.getPreferredWidth() - 100, GraphicsManager.Instance.getPreferredHeight() - 100);
 
             //load characters
-            GraphicsManager.Instance.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
-            GraphicsManager.Instance.mouse = Mice.Instance.loadMice(Content.Load<Texture2D>("mouse"));
+            GraphicsManager.Instance.loadSnake(Content.Load<Texture2D>(Variables.snakeHead), Content.Load<Texture2D>(Variables.snakeBody), Content.Load<Texture2D>(Variables.snakeTail));
+            GraphicsManager.Instance.mouse = Mice.Instance.loadMice(Content.Load<Texture2D>(Variables.mouse));
 
             if(Variables.obstacleMode)
-                GraphicsManager.Instance.obstacle = Content.Load<Texture2D>("brick");
+                GraphicsManager.Instance.obstacle = Content.Load<Texture2D>(Variables.obstacle);
 
             contentLoaded = true;
 
@@ -207,7 +207,7 @@ namespace SnackAttack
 
         public void winCondition(){
 
-            if(Collision.doesIntersect(Mice.Instance.mouseBox, Snake.Instance.headBox)){
+            if(Collision.doesIntersect(Mice.Instance.mouseBox, Snake.Instance.getHeadBox())){
                 gameState = GameState.Won;
             }
         }

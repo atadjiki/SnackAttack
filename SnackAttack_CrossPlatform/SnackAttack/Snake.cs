@@ -28,7 +28,7 @@ namespace SnackAttack.Desktop
         List<Vector2> positions;
         List<Texture2D> snakeBody;
 
-        public BoundingBox headBox = new BoundingBox();
+        List<BoundingBox> snakeBoxes;
 
         KeyboardState previousKB;
 
@@ -62,6 +62,7 @@ namespace SnackAttack.Desktop
             snakeBody = new List<Texture2D>(snakeLength);
             positions = new List<Vector2>(snakeLength);
             previousPositions = new List<Vector2>(snakeLength * spacing);
+            snakeBoxes = new List<BoundingBox>();
 
             //add and increment offsets in loop
 
@@ -69,6 +70,7 @@ namespace SnackAttack.Desktop
             for (int i = 0; i < snakeLength; i++)
             {
                 positions.Add(new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY()));
+                snakeBoxes.Add(new BoundingBox());
 
             }
         }
@@ -79,6 +81,7 @@ namespace SnackAttack.Desktop
 
             positions.Insert(positions.Count - 1, position);
             snakeBody.Insert(positions.Count - 2, GraphicsManager.Instance.bodyAsset);
+            snakeBoxes.Insert(positions.Count - 1, new BoundingBox());
 
 
         }
@@ -104,18 +107,12 @@ namespace SnackAttack.Desktop
 
         public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect)
         {
+           
+            //snakeBoxes[0] = Collision.UpdateBoundingBox(snakeBoxes[0], GraphicsManager.Instance.headAsset, positions[0]);
 
-            headBox = Collision.UpdateBoundingBox(headBox, GraphicsManager.Instance.headAsset, positions[0]);
+            UpdateSnakeBoxes();
+
             noKeyPressed = true;
-            shrinkMode = false;
-
-
-            //the snake shouldnt move if no key is being pressed
-            //also, depending on what key is pressed the head is either the first or last node
-            //and the previous positions list should be reversed if moving the tail
-
-            //if the head is moving but the snake has reached max lenghth, we need to disallow further movement of the head
-            //UNTIL the user switches controls
 
             bool allowTail = true;
             bool allowHead = true;
@@ -308,6 +305,22 @@ namespace SnackAttack.Desktop
             }
         }
 
+        private void UpdateSnakeBoxes()
+        {
+            for (int i = 0; i < snakeBoxes.Count; i++){
+
+                if(i == 0){
+                    snakeBoxes[0] = Collision.UpdateBoundingBox(snakeBoxes[0], GraphicsManager.Instance.headAsset, positions[0]);
+                } else if(i == snakeBoxes.Count-1){
+                    snakeBoxes[snakeBoxes.Count-1] = Collision.UpdateBoundingBox(snakeBoxes[snakeBoxes.Count-1], GraphicsManager.Instance.tailAsset, positions[snakeBoxes.Count-1]);
+                } else{
+                    snakeBoxes[i] = Collision.UpdateBoundingBox(snakeBoxes[i], GraphicsManager.Instance.bodyAsset, positions[i]);
+                }
+
+
+            }
+        }
+
         public float getSpeed()
         {
             return snakeSpeed;
@@ -383,9 +396,20 @@ namespace SnackAttack.Desktop
             return positions;
         }
 
+        public List<BoundingBox> getSnakeBoxes(){
+          
+            return snakeBoxes;
+        }
+
+        public BoundingBox getHeadBox(){
+          return snakeBoxes[0];
+        }
+
         public void addToSnakeBody(Texture2D asset){
             snakeBody.Add(asset);
         }
+
+
     }
 
 
