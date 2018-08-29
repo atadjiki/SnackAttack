@@ -8,21 +8,7 @@ namespace SnackAttack.Desktop
 {
     public class Snake
     {
-        //constants
-        float snakeSpeed;
-        float maxSpeed;
 
-        int snakeLength; // maximum amnount of snake nodes, including head
-        int maxLength;
-        int minLength;
-        int spacing; //track every nth head positions (0 will look really mushed)
-        int collisionModifier = 50;
-        int slowdown = 5;
-       
-        bool up = false, down = false, left = false, right = false;
-        bool noKeyPressed = true;
-        bool tailMoving = false;
-        bool shrinkMode = false;
 
         List<Vector2> previousPositions;
         List<Vector2> positions;
@@ -31,6 +17,14 @@ namespace SnackAttack.Desktop
         List<BoundingBox> snakeBoxes;
 
         KeyboardState previousKB;
+
+        bool up = false, down = false, left = false, right = false;
+        bool noKeyPressed = true;
+        bool tailMoving = false;
+        bool shrinkMode = false;
+
+        float snakeSpeed = Variables.maxSpeed;
+        int snakeLength = Variables.minLength;
 
         private static Snake instance = null;
 
@@ -52,22 +46,17 @@ namespace SnackAttack.Desktop
         }
 
         public void Initialize(){
-            snakeSpeed = 100f;
-            maxSpeed = snakeSpeed;
-            snakeLength = 2; //must always have at least a head and tail!
-            maxLength = 6;
-            minLength = snakeLength; //must at minimum be snakelength
-            spacing = 25;
 
-            snakeBody = new List<Texture2D>(snakeLength);
-            positions = new List<Vector2>(snakeLength);
-            previousPositions = new List<Vector2>(snakeLength * spacing);
+            snakeBody = new List<Texture2D>(Variables.minLength);
+            positions = new List<Vector2>(Variables.minLength);
+            previousPositions = new List<Vector2>(Variables.minLength * Variables.spacing);
             snakeBoxes = new List<BoundingBox>();
+
 
             //add and increment offsets in loop
 
             //initialize all node positions 
-            for (int i = 0; i < snakeLength; i++)
+            for (int i = 0; i < Variables.minLength; i++)
             {
                 positions.Add(new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY()));
                 snakeBoxes.Add(new BoundingBox());
@@ -241,31 +230,30 @@ namespace SnackAttack.Desktop
                 //check collision, if this move is allowed, store the position - if not, stay where we are!
                 if (doesIntersect)
                 {
-
-                    snakeSpeed = snakeSpeed / slowdown;
+                        snakeSpeed =  snakeSpeed / Variables.slowdown;
 
                     Console.WriteLine("Speed: " + snakeSpeed);
 
                     if (up)
                     {
-                        head.Y += collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        head.Y += Variables.collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
                     }
                     else if (down)
                     {
-                        head.Y -= collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        head.Y -= Variables.collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     }
                     else if (left)
                     {
-                        head.X += collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        head.X += Variables.collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     }
                     else if (right)
                     {
-                        head.X -= collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        head.X -= Variables.collisionModifier * snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                     }
                 }
 
-                if (snakeSpeed < maxSpeed)
+                if (snakeSpeed < Variables.maxSpeed)
                 {
                     snakeSpeed++;
                 }
@@ -280,9 +268,9 @@ namespace SnackAttack.Desktop
                     //set position
                     Vector2 temp = positions[i];
 
-                    if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
+                    if (previousPositions.Count != 0 && previousPositions.Count > i * Variables.spacing)
                     {
-                        temp = previousPositions.ToArray()[i * spacing];
+                        temp = previousPositions.ToArray()[i * Variables.spacing];
                     }
 
                     //store back in list
@@ -291,7 +279,7 @@ namespace SnackAttack.Desktop
                 }
 
                 //if there is room to grow, and the head has moved enough, increment snake 
-                if (previousPositions.Count > spacing * positions.Count && positions.Count <= maxLength)
+                if (previousPositions.Count > Variables.spacing * positions.Count && positions.Count <= Variables.maxLength)
                 {
                     Vector2 position = positions[positions.Count - 1];
                     growSnake(1, position);
@@ -366,8 +354,8 @@ namespace SnackAttack.Desktop
         {
 
 
-            if (previousPositions.Count >= positions.Count * spacing)
-                previousPositions = previousPositions.GetRange(0, positions.Count * spacing);
+            if (previousPositions.Count >= positions.Count * Variables.spacing)
+                previousPositions = previousPositions.GetRange(0, positions.Count * Variables.spacing);
 
             previousPositions.Reverse();
 
@@ -377,9 +365,9 @@ namespace SnackAttack.Desktop
                 //set position
                 Vector2 temp = positions[i];
 
-                if (previousPositions.Count != 0 && previousPositions.Count > i * spacing)
+                if (previousPositions.Count != 0 && previousPositions.Count > i * Variables.spacing)
                 {
-                    temp = previousPositions.ToArray()[i * spacing];
+                    temp = previousPositions.ToArray()[i * Variables.spacing];
                 }
 
                 //store back in list
@@ -402,7 +390,7 @@ namespace SnackAttack.Desktop
         }
 
         public BoundingBox getHeadBox(){
-          return snakeBoxes[0];
+           return snakeBoxes[0];
         }
 
         public void addToSnakeBody(Texture2D asset){

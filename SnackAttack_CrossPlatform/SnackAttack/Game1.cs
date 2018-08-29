@@ -15,8 +15,6 @@ namespace SnackAttack
     public class Game1 : Game
     {
 
-        //these are just placeholders to test win condition 
-
         TimeSpan timeSpan; //30 sec in ms, extra second for startup :p
 
         KeyboardState currentKB, previousKB;
@@ -145,12 +143,18 @@ namespace SnackAttack
 
                 //check win
                 winCondition();
+                miceSnakeCollision();
                 bool collision;
 
                 if (Variables.obstacleMode)
                     collision = Obstacles.Instance.checkCollision();
-                else
-                  collision = false;
+                else{
+
+                    //check collision between mouse and snake body
+
+                    collision = false;
+                }
+                  
 
                 Snake.Instance.UpdateSnakePositions(currentKB, gameTime, GraphicsManager.Instance.GetGraphics(), collision); //update snake 
                 Mice.Instance.mousePos = Mice.Instance.UpdateMicePosition(gameTime);
@@ -210,6 +214,27 @@ namespace SnackAttack
             if(Collision.doesIntersect(Mice.Instance.mouseBox, Snake.Instance.getHeadBox())){
                 gameState = GameState.Won;
             }
+        }
+
+        public bool miceSnakeCollision(){
+
+            bool collision = false; 
+            foreach(BoundingBox box in Snake.Instance.getSnakeBoxes()){
+
+                if(0 != Snake.Instance.getSnakeBoxes().IndexOf(box) 
+                   && Snake.Instance.getSnakeBoxes().Count-1 != Snake.Instance.getSnakeBoxes().IndexOf(box)){
+                    if (Collision.doesIntersect(Mice.Instance.mouseBox, box))
+                    {
+                        collision = true;
+                        Console.WriteLine("Mouse collided with snake body at " + box.Max + ", " + box.Min);
+                        break;
+                    }
+                }
+
+            }
+
+            return collision;
+
         }
 
         /// <summary>

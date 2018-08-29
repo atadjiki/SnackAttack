@@ -27,21 +27,21 @@ namespace SnackAttack.Desktop
             return box;
         }
 
-        //public static bool CheckCollisions(BoundingBox headBox, List<Vector2> vectors, List<BoundingBox> boxes)
-        //{
-        //    bool collision = false;
+        public static bool CheckCollisions(BoundingBox box, List<Vector2> vectorsB, List<BoundingBox> boxesB)
+        {
+            bool collision = false;
 
-        //    for (int i = 0; i < vectors.Count; i++)
-        //    {
-        //        if (doesIntersect(headBox, boxes[i]))
-        //        {
-        //            collision = true;
-        //            break;
-        //        }
-        //    }
+            for (int i = 0; i < vectorsB.Count; i++)
+            {
+                if (doesIntersect(box, boxesB[i]))
+                {
+                    collision = true;
+                    break;
+                }
+            }
 
-        //    return collision;
-        //}
+            return collision;
+        }
 
         public static bool CheckCollisions(List<BoundingBox> boxesA, List<Vector2> vectorsB, List<BoundingBox> boxesB)
         {
@@ -63,6 +63,22 @@ namespace SnackAttack.Desktop
             return collision;
         }
 
+        public static bool CheckMouseSnakeCollisions()
+        {
+
+            List<Vector2> snakeBody = Snake.Instance.getPositions();
+            if (snakeBody.Count == 0) return false;
+            snakeBody.RemoveAt(0);
+            snakeBody.RemoveAt(snakeBody.Count - 1);
+
+            List<BoundingBox> snakeBoxes = Snake.Instance.getSnakeBoxes();
+            if (snakeBoxes.Count == 0) return false;
+            snakeBoxes.RemoveAt(0);
+            snakeBoxes.RemoveAt(snakeBoxes.Count - 1);
+
+
+            return CheckCollisions(Mice.Instance.mouseBox, snakeBody, snakeBoxes);
+        }
     }
 
 }
