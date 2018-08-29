@@ -30,15 +30,11 @@ namespace SnackAttack.Desktop
 
         public BoundingBox headBox = new BoundingBox();
 
-        Texture2D headAsset;
-        Texture2D bodyAsset;
-        Texture2D tailAsset;
-
         KeyboardState previousKB;
 
+        private static Snake instance = null;
 
-
-        public Snake(float initialX, float initialY)
+        private Snake()
         {
             snakeSpeed = 100f;
             maxSpeed = snakeSpeed;
@@ -56,17 +52,29 @@ namespace SnackAttack.Desktop
             //initialize all node positions 
             for (int i = 0; i < snakeLength; i++)
             {
-                positions.Add(new Vector2(initialX, initialY));
+                positions.Add(new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY()));
 
             }
-
         }
+
+        public static Snake Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Snake();
+                }
+                return instance;
+            }
+        }
+
 
         public void growSnake(int amount, Vector2 position)
         {
 
             positions.Insert(positions.Count - 1, position);
-            snakeBody.Insert(positions.Count - 2, bodyAsset);
+            snakeBody.Insert(positions.Count - 2, GraphicsManager.Instance.bodyAsset);
 
 
         }
@@ -85,21 +93,15 @@ namespace SnackAttack.Desktop
         public void loadSnake(Texture2D head, Texture2D body, Texture2D tail)
         {
             //add snake head
-
-            headAsset = head;
-            snakeBody.Add(headAsset);
-
-            bodyAsset = body;
-
-            //add snake tail
-            tailAsset = tail;
-            snakeBody.Add(tailAsset);
+            snakeBody.Add(GraphicsManager.Instance.headAsset);
+            snakeBody.Add(GraphicsManager.Instance.tailAsset);
         }
+
 
         public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect)
         {
 
-            headBox = Collision.UpdateBoundingBox(headBox, headAsset, positions[0]);
+            headBox = Collision.UpdateBoundingBox(headBox, GraphicsManager.Instance.headAsset, positions[0]);
             noKeyPressed = true;
             shrinkMode = false;
 
@@ -113,66 +115,6 @@ namespace SnackAttack.Desktop
 
             bool allowTail = true;
             bool allowHead = true;
-
-            //cant move head and tail simultaneously 
-            //if(kstate.IsKeyDown(Keys.LeftShift) && (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.S) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
-            //   && (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right)))
-            //{
-            //    return;
-            //}
-
-            ////if the tail moved last, and is currently being moved, and the snake is at max length, return 
-            //if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.S) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
-            //{
-            //    if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
-            //    {
-            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
-            //        {
-            //            allowHead = false;
-            //        }
-
-            //    }
-
-            //}
-            //else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
-            //{
-            //    if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
-            //    {
-            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
-            //        {
-            //            allowTail = false;
-            //        }
-            //    }
-
-            //}
-            //else if (previousKB.IsKeyDown(Keys.Up) || previousKB.IsKeyDown(Keys.Down) || previousKB.IsKeyDown(Keys.Left) || previousKB.IsKeyDown(Keys.Right))
-            //{
-            //    if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.D) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
-            //    {
-            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
-            //        {
-            //            allowHead = true;
-            //        }
-
-            //    }
-
-            //}
-            //else if (previousKB.IsKeyDown(Keys.W) || previousKB.IsKeyDown(Keys.D) || previousKB.IsKeyDown(Keys.A) || previousKB.IsKeyDown(Keys.D))
-            //{
-            //    if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
-            //    {
-            //        if (!checkDistance(positions[0], positions[positions.Count - 1]))
-            //        {
-            //            allowTail = true;
-            //        }
-            //    }
-
-            //}
-
-
-
-
-
 
             if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
             {
@@ -295,8 +237,8 @@ namespace SnackAttack.Desktop
                 previousPositions.Insert(0, lastPreviousPosition);
 
                 //this stops the snake from moving out of the screen :)
-                head.X = Math.Min(Math.Max(headAsset.Width / 2, head.X), graphics.PreferredBackBufferWidth - headAsset.Width / 2);
-                head.Y = Math.Min(Math.Max(headAsset.Height / 2, head.Y), graphics.PreferredBackBufferHeight - headAsset.Height / 2);
+                head.X = Math.Min(Math.Max(GraphicsManager.Instance.headAsset.Width / 2, head.X), graphics.PreferredBackBufferWidth - GraphicsManager.Instance.headAsset.Width / 2);
+                head.Y = Math.Min(Math.Max(GraphicsManager.Instance.headAsset.Height / 2, head.Y), graphics.PreferredBackBufferHeight - GraphicsManager.Instance.headAsset.Height / 2);
 
                 //check collision, if this move is allowed, store the position - if not, stay where we are!
                 if (doesIntersect)
@@ -365,29 +307,6 @@ namespace SnackAttack.Desktop
             }
         }
 
-        public void DrawSnake(SpriteBatch spriteBatch)
-        {
-            //draw all snake nodes
-
-
-            for (int i = 0; i < positions.Count; i++)
-            {
-
-                spriteBatch.
-                Draw(snakeBody[i], positions[i], null, Color.White, 0f, new Vector2(snakeBody[i].Width / 2, snakeBody[i].Height / 2), Vector2.One, SpriteEffects.None, 0f);
-            }
-
-        }
-
-        //keeps track of snake head bounding box
-        //public void UpdateBoundingBox()
-        //{
-        //    this.headBox.Min.X = positions[0].X;
-        //    this.headBox.Min.Y = positions[0].Y;
-        //    this.headBox.Max.X = positions[0].X + snakeBody[0].Width;
-        //    this.headBox.Max.Y = positions[0].Y + snakeBody[0].Height;
-        //}
-
         public float getSpeed()
         {
             return snakeSpeed;
@@ -407,7 +326,7 @@ namespace SnackAttack.Desktop
         {
 
 
-            float maxDistance = 3.5f * bodyAsset.Width;
+            float maxDistance = 3.5f * GraphicsManager.Instance.bodyAsset.Width;
             float distance = Vector2.Distance(head, tail);
 
             if (distance > maxDistance)
@@ -449,14 +368,22 @@ namespace SnackAttack.Desktop
                     temp = previousPositions.ToArray()[i * spacing];
                 }
 
-
-
                 //store back in list
                 positions[i] = temp;
 
             }
+        }
 
+        public List<Texture2D> getSnakeBody(){
+            return snakeBody;
+        }
 
+        public List<Vector2> getPositions(){
+            return positions;
+        }
+
+        public void addToSnakeBody(Texture2D asset){
+            snakeBody.Add(asset);
         }
     }
 

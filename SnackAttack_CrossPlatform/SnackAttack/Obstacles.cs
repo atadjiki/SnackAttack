@@ -7,31 +7,29 @@ namespace SnackAttack.Desktop
 {
     public class Obstacles
     {
-        Texture2D obstacle;
+
         List<Vector2> obstacles;
         List<BoundingBox> obstacleBoxes;
 
-        public Obstacles(Texture2D texture){
-            obstacle = texture;
+        private static Obstacles instance = null;
+
+        private Obstacles()
+        {
             obstacles = new List<Vector2>();
             obstacleBoxes = new List<BoundingBox>();
             InitializeObstacles();
-            
         }
 
-        public void DrawObstacles(SpriteBatch spriteBatch)
+        public static Obstacles Instance
         {
-
-
-            foreach (Vector2 position in obstacles)
+            get
             {
-
-                spriteBatch.
-                           Draw(obstacle, position, null, Color.White, 0f,
-                new Vector2(obstacle.Width / 2, obstacle.Height / 2), Vector2.One, SpriteEffects.None, 0f);
+                if (instance == null)
+                {
+                    instance = new Obstacles();
+                }
+                return instance;
             }
-
-
         }
 
         public void InitializeObstacles()
@@ -53,7 +51,7 @@ namespace SnackAttack.Desktop
                 obstacleBoxes.Add(new BoundingBox());
         }
 
-        public void UpdateObstacleBoxes()
+        public void UpdateObstacleBoxes(Texture2D obstacle)
         {
             for (int i = 0; i < obstacles.Count; i++)
             {
@@ -63,13 +61,17 @@ namespace SnackAttack.Desktop
 
         }
 
-        public bool checkCollision(BoundingBox headBox){
-            return Collision.CheckCollisions(headBox, obstacles, obstacleBoxes);
+        public bool checkCollision(){
+            return Collision.CheckCollisions(Snake.Instance.headBox, obstacles, obstacleBoxes);
         }
 
-       
+        public List<Vector2> getPositions(){
+            return obstacles;
+        }
 
-
+        public List<BoundingBox> getObstacleBoxes(){
+            return obstacleBoxes;
+        }
 
     }
 }

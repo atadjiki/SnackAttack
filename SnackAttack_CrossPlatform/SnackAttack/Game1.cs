@@ -15,45 +15,23 @@ namespace SnackAttack
     public class Game1 : Game
     {
 
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        public Color backgroundColor = Color.CornflowerBlue;
-        float initialX;
-        float initialY;
-
-        Snake snake;
-        Mice mice;
-
-
-        Texture2D pause;
-        Vector2 pausePos;
-
-
         //these are just placeholders to test win condition 
-        Texture2D mouse;
-        Vector2 mousePos;
-        BoundingBox mouseBox;
 
         TimeSpan timeSpan; //30 sec in ms, extra second for startup :p
-        int time = 31000;
 
         KeyboardState currentKB, previousKB;
-        private SpriteFont font;
 
-        enum GameState{ Start, Playing, Paused, Won, TimeUp};
-        GameState gameState;
 
-        string welcomeMessage;
-        string timeUpMessage;
-        string winMessage;
+        public enum GameState{ Start, Playing, Paused, Won, TimeUp};
+        public static GameState gameState;
 
-        bool obstacleMode = false;
-        Obstacles obstacles;
+
+        bool contentLoaded = false;
 
         public Game1()
         {
 
-            graphics = new GraphicsDeviceManager(this);
+            GraphicsManager.Instance.setGraphicsDeviceManager(new GraphicsDeviceManager(this));
             Content.RootDirectory = "Content";
             gameState = GameState.Start;
 
@@ -68,26 +46,13 @@ namespace SnackAttack
         protected override void Initialize()
         {
 
-            timeSpan = TimeSpan.FromMilliseconds(time);
-
-            welcomeMessage =
-            "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n shift - shrink \n wasd - control head \n arrow keys - control tail";
-
-            timeUpMessage = "Time up! Press 'r' to Restart";
+            timeSpan = TimeSpan.FromMilliseconds(Variables.time);
 
 
-            initialX = (graphics.PreferredBackBufferWidth / 2) - 150; //get middle of the screen 
-            initialY = graphics.PreferredBackBufferHeight / 2;
+            Mice.Instance.mouseBox = new BoundingBox();
 
-            mouseBox = new BoundingBox();
-            snake = new Snake(initialX, initialY);
-            mice = new Mice(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            Mice.Instance.mousePos = new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY() - 150);
 
-            pausePos = new Vector2(graphics.PreferredBackBufferWidth - 100, graphics.PreferredBackBufferHeight - 100);
-            mousePos = new Vector2(initialX - 150, initialY - 150);
-
-            if (obstacleMode)
-                obstacles = new Obstacles(Content.Load<Texture2D>("brick"));
 
             base.Initialize();
         }
@@ -98,19 +63,20 @@ namespace SnackAttack
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            //load timer font
-            font = Content.Load<SpriteFont>("Timer");
-            pause = Content.Load<Texture2D>("pause");
+            GraphicsManager.Instance.LoadContent();
+            GraphicsManager.Instance.font = Content.Load<SpriteFont>("Timer");
+            GraphicsManager.Instance.pause = Content.Load<Texture2D>("pause");
+            GraphicsManager.Instance.pausePos = new Vector2(GraphicsManager.Instance.getPreferredWidth() - 100, GraphicsManager.Instance.getPreferredHeight() - 100);
 
-            //load snake assets
-            snake.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
+            //load characters
+            GraphicsManager.Instance.loadSnake(Content.Load<Texture2D>("blueball"), Content.Load<Texture2D>("redball"), Content.Load<Texture2D>("greenball"));
+            GraphicsManager.Instance.mouse = Mice.Instance.loadMice(Content.Load<Texture2D>("mouse"));
 
+            if(Variables.obstacleMode)
+                GraphicsManager.Instance.obstacle = Content.Load<Texture2D>("brick");
 
-            mouse = mice.loadMice(Content.Load<Texture2D>("mouse"));
-
+            contentLoaded = true;
 
 
         }
@@ -136,13 +102,11 @@ namespace SnackAttack
 
             if (gameState == GameState.Start)
             {
-
                 handleStartMenuInputs();
             }
 
             else if (gameState == GameState.Playing)
             {
-
                 handleInputs();
 
                 updateGame(gameTime);
@@ -166,13 +130,17 @@ namespace SnackAttack
 
         private void updateGame(GameTime gameTime)
         {
+
+            if (!contentLoaded)
+                return;
+
             ManageTimer(gameTime);
 
-            if(obstacleMode){
-                obstacles.UpdateObstacleBoxes();
+            if(Variables.obstacleMode){
+                Obstacles.Instance.UpdateObstacleBoxes(GraphicsManager.Instance.obstacle);
             }
 
-            mouseBox = Collision.UpdateBoundingBox(mouseBox, mouse, mousePos);
+            Mice.Instance.mouseBox = Collision.UpdateBoundingBox(Mice.Instance.mouseBox, GraphicsManager.Instance.mouse, Mice.Instance.mousePos);
 
             if (gameState != GameState.TimeUp)
             {
@@ -181,13 +149,13 @@ namespace SnackAttack
                 winCondition();
                 bool collision;
 
-                if (obstacleMode)
-                    collision = obstacles.checkCollision(snake.headBox);
+                if (Variables.obstacleMode)
+                    collision = Obstacles.Instance.checkCollision();
                 else
                   collision = false;
 
-                snake.UpdateSnakePositions(currentKB, gameTime, graphics, collision); //update snake 
-                mousePos = mice.UpdateMicePosition(gameTime, snake.getHeadPosition());
+                Snake.Instance.UpdateSnakePositions(currentKB, gameTime, GraphicsManager.Instance.GetGraphics(), collision); //update snake 
+                Mice.Instance.mousePos = Mice.Instance.UpdateMicePosition(gameTime);
             }
         }
 
@@ -241,7 +209,7 @@ namespace SnackAttack
 
         public void winCondition(){
 
-            if(Collision.doesIntersect(snake.headBox, mouseBox)){
+            if(Collision.doesIntersect(Mice.Instance.mouseBox, Snake.Instance.headBox)){
                 gameState = GameState.Won;
             }
         }
@@ -252,115 +220,12 @@ namespace SnackAttack
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(backgroundColor);
+            GraphicsDevice.Clear(Variables.backgroundColor);
 
-            spriteBatch.Begin();
-
-            if(gameState == GameState.Start){
-                drawStartUI();
-            }
-
-            if (gameState == GameState.Playing)
-            {
-
-                drawGameActors();
-                drawGameUI();
-            }
-
-            if(gameState == GameState.Paused){
-                drawPauseUI();
-                drawGameActors();
-                drawGameUI();
-            }
-
-            if(gameState == GameState.Won){
-                drawGameActors();
-                drawWinUI();
-            }
-
-            if(gameState == GameState.TimeUp){
-                drawGameActors();
-                drawTimeUpUI();
-            }
-
-            spriteBatch.End();
+            GraphicsManager.Instance.DrawContent(getTimerText(), timeSpan);
 
             base.Draw(gameTime);
         }
-
-        private void drawStartUI(){
-
-
-
-            spriteBatch.
-                       DrawString(font, welcomeMessage,
-                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 100,
-                                               graphics.PreferredBackBufferHeight / 2 -75), Color.White);
-        }
-
-        private void drawPauseUI(){
-            spriteBatch.
-                           Draw(pause, pausePos, null, Color.White, 0f,
-                                new Vector2(pause.Width / 2, pause.Height / 2), Vector2.One, SpriteEffects.None, 0f);
-        }
-
-        private void drawGameUI()
-        {
-            spriteBatch.
-                       DrawString(font, getTimerText(),
-                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
-                                               graphics.PreferredBackBufferHeight - (11 * graphics.PreferredBackBufferHeight / 12)), Color.White);
-
-            spriteBatch.
-                       DrawString(font, "Speed: " + snake.getSpeed(),
-                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
-                                               graphics.PreferredBackBufferHeight - (10 * graphics.PreferredBackBufferHeight / 12)), Color.White);
-
-            spriteBatch.
-                       DrawString(font, "Length: " + snake.getSnakeDistance(),
-                                   new Vector2(graphics.PreferredBackBufferWidth - (11 * graphics.PreferredBackBufferWidth / 12),
-                                               graphics.PreferredBackBufferHeight - (9 * graphics.PreferredBackBufferHeight / 12)), Color.White);
-        }
-
-        private void drawTimeUpUI(){
-
-            spriteBatch.
-                       DrawString(font, timeUpMessage,
-                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
-                                               graphics.PreferredBackBufferHeight / 2), Color.White);
-
-        }
-
-        private void drawWinUI()
-        {
-
-            TimeSpan winTime = new TimeSpan(0, 0, time);
-
-
-
-            winMessage = "You win! Time: " + (winTime.Seconds - timeSpan.Seconds).ToString() + " seconds. Press 'r' to Restart";
-
-            spriteBatch.
-                       DrawString(font, winMessage,
-                                   new Vector2(graphics.PreferredBackBufferWidth / 2 - 50,
-                                               graphics.PreferredBackBufferHeight / 2), Color.White);
-
-        }
-
-        private void drawGameActors()
-        {
-
-            if(obstacleMode)
-                obstacles.DrawObstacles(spriteBatch);
-
-            snake.DrawSnake(spriteBatch);
-
-            bool win = false; if (gameState == GameState.Won) win = true;
-            mice.DrawMice(spriteBatch, win);
-
-
-        }
-
 
         public string getTimerText(){
 
@@ -378,8 +243,6 @@ namespace SnackAttack
             }
 
         }
-
-       
 
         private void startGame(){
 

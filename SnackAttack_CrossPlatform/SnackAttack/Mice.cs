@@ -10,16 +10,14 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SnackAttack.Desktop
 {
-    class Mice
+    public class Mice
     {
         float miceSpeed;
-        int collisionModifier = 1;
+        //int collisionModifier = 1;
         float backWidth;
         float backHeight;
         Texture2D miceBody;
         public Vector2 miceLocation;
-        BoundingBox miceBox = new BoundingBox();
-        private Vector2 snakeHeadLocation;
         private List<Vector2> micePointLocations;
         private int totalMicePoints;
         private float xOffset = 50f;
@@ -28,14 +26,18 @@ namespace SnackAttack.Desktop
         private int index = 1;
         private int previousIndex;
 
+        public Vector2 mousePos;
+        public BoundingBox mouseBox;
 
-        public Mice(float initialX, float initialY)
+        private static Mice instance = null;
+
+        private Mice()
         {
-            backWidth = initialX;
-            backHeight = initialY;
+            backWidth = GraphicsManager.Instance.getPreferredWidth();
+            backHeight = GraphicsManager.Instance.getPreferredHeight();
             miceSpeed = 210f;
             totalMicePoints = 4;
-            
+
             micePointLocations = new List<Vector2>(totalMicePoints);
 
             micePointLocations.Add(new Vector2(backWidth - xOffset, backHeight - yOffset));
@@ -46,6 +48,18 @@ namespace SnackAttack.Desktop
             miceLocation = micePointLocations[0];
             gotoLocation = micePointLocations[1];
             previousIndex = 1;
+        }
+
+        public static Mice Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Mice();
+                }
+                return instance;
+            }
         }
 
 
@@ -61,22 +75,21 @@ namespace SnackAttack.Desktop
     /// </summary>
     /// <param name = "gameTime"> which is snapshot of timing values
     /// <param name = "headPosition"> gives the head position of the snake to run away from it
-        public Vector2 UpdateMicePosition(GameTime gameTime, Vector2 headPosition)
+        public Vector2 UpdateMicePosition(GameTime gameTime)
         {
-            UpdateBoundingBox();
             float x_direction;
             float y_direction;
             int xPercent;
             int yPercent;
             //getting the direction of mice
-            
+
             previousIndex = index;
             if (miceLocation.X == gotoLocation.X && miceLocation.Y == gotoLocation.Y)
             {
                 
                 
-                xPercent = (int)((headPosition.X * 100) / backWidth);
-                yPercent = (int)((headPosition.Y * 100) / backHeight);
+                xPercent = (int)((Snake.Instance.getHeadPosition().X * 100) / backWidth);
+                yPercent = (int)((Snake.Instance.getHeadPosition().Y * 100) / backHeight);
                 int difference = xPercent - yPercent;
                 Console.WriteLine("xPercent: " + xPercent + "YPercent: " + yPercent + " difference: " + difference + " Previous Index: " + previousIndex);
                 if (xPercent >= 50) {
@@ -168,23 +181,14 @@ namespace SnackAttack.Desktop
             return miceLocation;
         }
 
-        public void DrawMice(SpriteBatch spriteBatch, bool win)
-        {
-           // if (!win)
-           // {
-                spriteBatch.Draw(miceBody, this.miceLocation, null, Color.White, 0f, new Vector2(miceBody.Width / 2, miceBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
-          //  }
+        public Vector2 getMiceLocation(){
+            return miceLocation;
         }
 
-        protected void UpdateBoundingBox()
-        {
-            //Vector2 location = this.miceLocation;
-            //this.miceBox.Min.X = location.X;
-            //this.miceBox.Min.Y = location.Y;
-            //this.miceBox.Max.X = location.X + miceBody.Width;
-            //this.miceBox.Max.Y = location.Y + miceBody.Height;
-
+        public Texture2D getMiceBody(){
+            return miceBody;
         }
+
     }
 
 }
