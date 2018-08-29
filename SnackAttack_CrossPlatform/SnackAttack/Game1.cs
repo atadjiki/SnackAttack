@@ -48,11 +48,9 @@ namespace SnackAttack
 
             timeSpan = TimeSpan.FromMilliseconds(Variables.time);
 
-
-            Mice.Instance.mouseBox = new BoundingBox();
-
-            Mice.Instance.mousePos = new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY() - 150);
-
+            Snake.Instance.Initialize();
+            Mice.Instance.Initialize();
+            if (Variables.obstacleMode) Obstacles.Instance.Initialize();
 
             base.Initialize();
         }

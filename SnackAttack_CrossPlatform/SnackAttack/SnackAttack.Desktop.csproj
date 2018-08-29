@@ -52,6 +52,8 @@
     <Compile Include="Snake.cs" />
     <Compile Include="Obstacles.cs" />
     <Compile Include="Collision.cs" />
+    <Compile Include="GraphicsManager.cs" />
+    <Compile Include="Variables.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

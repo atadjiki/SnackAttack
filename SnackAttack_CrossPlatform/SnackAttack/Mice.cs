@@ -33,6 +33,23 @@ namespace SnackAttack.Desktop
 
         private Mice()
         {
+            Initialize();
+        }
+
+        public static Mice Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Mice();
+                }
+                return instance;
+            }
+        }
+
+        public void Initialize(){
+
             backWidth = GraphicsManager.Instance.getPreferredWidth();
             backHeight = GraphicsManager.Instance.getPreferredHeight();
             miceSpeed = 210f;
@@ -48,18 +65,10 @@ namespace SnackAttack.Desktop
             miceLocation = micePointLocations[0];
             gotoLocation = micePointLocations[1];
             previousIndex = 1;
-        }
 
-        public static Mice Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Mice();
-                }
-                return instance;
-            }
+            mouseBox = new BoundingBox();
+
+            mousePos = new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY() - 150);
         }
 
 

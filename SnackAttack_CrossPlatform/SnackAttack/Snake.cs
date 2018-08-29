@@ -34,8 +34,24 @@ namespace SnackAttack.Desktop
 
         private static Snake instance = null;
 
-        private Snake()
+        public Snake()
         {
+            Initialize();
+        }
+
+        public static Snake Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Snake();
+                }
+                return instance;
+            }
+        }
+
+        public void Initialize(){
             snakeSpeed = 100f;
             maxSpeed = snakeSpeed;
             snakeLength = 2; //must always have at least a head and tail!
@@ -54,18 +70,6 @@ namespace SnackAttack.Desktop
             {
                 positions.Add(new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY()));
 
-            }
-        }
-
-        public static Snake Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new Snake();
-                }
-                return instance;
             }
         }
 
@@ -146,16 +150,13 @@ namespace SnackAttack.Desktop
                 tailMoving = false;
                 noKeyPressed = false;
             }
-            else if (kstate.IsKeyDown(Keys.LeftShift) || kstate.IsKeyDown(Keys.LeftShift))
-            {
-                shrinkMode = true;
-            }
-            if (noKeyPressed && !shrinkMode)
+
+            if (noKeyPressed && shrinkMode == false)
                 return;
 
 
             //dont change any positions if the snake isnt moving 
-            else if (!noKeyPressed || shrinkMode)
+            else if (!noKeyPressed)
             {
                 if((tailMoving && allowTail) || (!tailMoving && allowHead)){
 

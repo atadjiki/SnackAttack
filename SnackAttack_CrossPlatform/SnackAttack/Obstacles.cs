@@ -15,9 +15,7 @@ namespace SnackAttack.Desktop
 
         private Obstacles()
         {
-            obstacles = new List<Vector2>();
-            obstacleBoxes = new List<BoundingBox>();
-            InitializeObstacles();
+            Initialize();
         }
 
         public static Obstacles Instance
@@ -30,6 +28,12 @@ namespace SnackAttack.Desktop
                 }
                 return instance;
             }
+        }
+
+        public void Initialize(){
+            obstacles = new List<Vector2>();
+            obstacleBoxes = new List<BoundingBox>();
+            InitializeObstacles();
         }
 
         public void InitializeObstacles()
