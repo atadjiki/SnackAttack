@@ -83,9 +83,12 @@ namespace SnackAttack
                 Content.Load<Texture2D>(Variables.snakeTailLeft), Content.Load<Texture2D>(Variables.snakeTailRight)
             );
 
-            GraphicsManager.Instance.mouse = Mice.Instance.loadMice(Content.Load<Texture2D>(Variables.mouse));
+            GraphicsManager.Instance.mouse = Content.Load<Texture2D>(Variables.mouseUp);
+            GraphicsManager.Instance.loadMouse(
+                Content.Load<Texture2D>(Variables.mouseUp), Content.Load<Texture2D>(Variables.mouseDown),
+                Content.Load<Texture2D>(Variables.mouseLeft), Content.Load<Texture2D>(Variables.mouseRight));
 
-            if(Variables.obstacleMode)
+            if (Variables.obstacleMode)
                 GraphicsManager.Instance.obstacle = Content.Load<Texture2D>(Variables.obstacle);
 
             contentLoaded = true;

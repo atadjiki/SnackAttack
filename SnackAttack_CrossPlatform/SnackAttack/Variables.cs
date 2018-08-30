@@ -29,10 +29,14 @@ namespace SnackAttack.Desktop
         public static string snakeTailUp = "Snake_tail_up";
         public static string snakeTailDown = "Snake_tail_down";
 
+        public static string mouseLeft = "Mice_left";
+        public static string mouseRight = "Mice_right";
+        public static string mouseUp = "Mice_up";
+        public static string mouseDown = "Mice_down";
+
         public static string obstacle = "brick";
         public static string pause = "pause";
         public static string timer = "Timer";
-        public static string mouse = "Mice";
 
 
         //game constants
