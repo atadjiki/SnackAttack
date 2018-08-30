@@ -14,13 +14,32 @@ namespace SnackAttack.Desktop
         public static string winMessage;
 
         //content names
-        public static string snakeHead = "blueball";
-        public static string snakeBody = "redball";
-        public static string snakeTail = "greenball";
+        public static string snakeHead = "Snake_head";
+        public static string snakeBody = "Snake_body";
+        public static string snakeTail = "Snake_tail";
+
+        public static string snakeHeadLeft = "Snake_head_left";
+        public static string snakeHeadRight = "Snake_head_right";
+        public static string snakeHeadUp = "Snake_head_up";
+        public static string snakeHeadDown = "Snake_head_down";
+
+        public static string snakeBodyLeft = "Snake_body_left";
+        public static string snakeBodyRight = "Snake_body_right";
+        public static string snakeBodyUp = "Snake_body_up";
+        public static string snakeBodyDown = "Snake_body_down";
+
+        public static string snakeTailLeft = "Snake_tail_left";
+        public static string snakeTailRight = "Snake_tail_right";
+        public static string snakeTailUp = "Snake_tail_up";
+        public static string snakeTailDown = "Snake_tail_down";
+
+
+
+
         public static string obstacle = "brick";
         public static string pause = "pause";
         public static string timer = "Timer";
-        public static string mouse = "mouse";
+        public static string mouse = "Mice";
 
 
         //game constants
