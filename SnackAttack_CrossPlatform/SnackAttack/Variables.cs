@@ -10,7 +10,7 @@ namespace SnackAttack.Desktop
 
         public static string backgroundimage = "background";
 
-        public static string welcomeMessage = "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n shift - shrink \n wasd - control head \n arrow keys - control tail";
+        public static string welcomeMessage = "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n \n wasd - control head \n arrow keys - control tail";
         public static string timeUpMessage = "Time up! Press 'r' to Restart";
         public static string winMessage;
 
@@ -47,7 +47,7 @@ namespace SnackAttack.Desktop
 
         //snake constants
         public static float maxSpeed = 100f;
-        public static int maxLength = 10;
+        public static int maxLength = 40;
         public static int minLength = 2;
         public static int spacing = 25; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;

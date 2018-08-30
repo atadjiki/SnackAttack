@@ -142,7 +142,7 @@ namespace SnackAttack.Desktop
         }
 
         public Texture2D getMiceBody(){
-            return miceBody;
+            return GraphicsManager.Instance.mouse;
         }
 
         /// <summary>
