@@ -14,9 +14,26 @@ namespace SnackAttack.Desktop
         public Texture2D pause;
         public Texture2D mouse;
         public Texture2D obstacle;
-        public Texture2D headAsset;
-        public Texture2D bodyAsset;
-        public Texture2D tailAsset;
+
+        public Texture2D headLeft;
+        public Texture2D headRight;
+        public Texture2D headUp;
+        public Texture2D headDown;
+
+        public Texture2D bodyLeft;
+        public Texture2D bodyRight;
+        public Texture2D bodyUp;
+        public Texture2D bodyDown;
+
+        public Texture2D tailLeft;
+        public Texture2D tailRight;
+        public Texture2D tailUp;
+        public Texture2D tailDown;
+
+        public enum Direction { left, right, up, down };
+        public enum SnakePart { head, tail, body };
+
+
 
 
         public Vector2 pausePos;
@@ -50,17 +67,35 @@ namespace SnackAttack.Desktop
 
         }
 
-        public void loadSnake(Texture2D head, Texture2D body, Texture2D tail)
+        public void loadSnakeHead(Texture2D up, Texture2D down, Texture2D left, Texture2D right)
         {
             //add snake head
+            headUp = up;
+            headDown = down;
+            headLeft = left;
+            headRight = right;
 
-            headAsset = head;
-            Snake.Instance.addToSnakeBody(headAsset);
-            bodyAsset = body;
+            Snake.Instance.addToSnakeBody(up);
+        }
 
-            //add snake tail
-            tailAsset = tail;
-            Snake.Instance.addToSnakeBody(tailAsset);
+        public void loadSnakeTail(Texture2D up, Texture2D down, Texture2D left, Texture2D right)
+        {
+
+            tailUp = up;
+            tailDown = down;
+            tailLeft = left;
+            tailRight = right;
+
+            Snake.Instance.addToSnakeBody(tailUp);
+        }
+
+        public void loadSnakeBody(Texture2D up, Texture2D down, Texture2D left, Texture2D right)
+        {
+            bodyUp = up;
+            bodyDown = down;
+            bodyLeft = left;
+            bodyRight = right;
+
         }
 
         public GraphicsDeviceManager GetGraphics(){
@@ -240,6 +275,68 @@ namespace SnackAttack.Desktop
 
         public float getInitialY(){
             return getPreferredHeight() / 2;
+        }
+
+        public Texture2D getSnakeTexture(Direction direction, SnakePart part)
+        {
+            Texture2D result = null;
+            if(part == SnakePart.head){
+                if(direction == Direction.up){
+                    return headUp;
+                }
+                else if (direction == Direction.down)
+                {
+                    return headDown;
+                }
+                else if (direction == Direction.left)
+                {
+                    return headLeft;
+                }
+                else if (direction == Direction.right)
+                {
+                    return headRight;
+                }
+            } 
+            else if (part == SnakePart.body)
+            {
+                if (direction == Direction.up)
+                {
+                    return bodyUp;
+                }
+                else if (direction == Direction.down)
+                {
+                    return bodyDown;
+                }
+                else if (direction == Direction.left)
+                {
+                    return bodyLeft;
+                }
+                else if (direction == Direction.right)
+                {
+                    return bodyRight;
+                }
+            }
+            else if (part == SnakePart.tail)
+            {
+                if (direction == Direction.up)
+                {
+                    return tailUp;
+                }
+                else if (direction == Direction.down)
+                {
+                    return tailDown;
+                }
+                else if (direction == Direction.left)
+                {
+                    return tailLeft;
+                }
+                else if (direction == Direction.right)
+                {
+                    return tailRight;
+                }
+            }
+
+            return null;
         }
     }
 

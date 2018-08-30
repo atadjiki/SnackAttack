@@ -66,7 +66,22 @@ namespace SnackAttack
             GraphicsManager.Instance.pausePos = new Vector2(GraphicsManager.Instance.getPreferredWidth() - 100, GraphicsManager.Instance.getPreferredHeight() - 100);
 
             //load characters
-            GraphicsManager.Instance.loadSnake(Content.Load<Texture2D>(Variables.snakeHead), Content.Load<Texture2D>(Variables.snakeBody), Content.Load<Texture2D>(Variables.snakeTail));
+            //up down left right
+            GraphicsManager.Instance.loadSnakeHead(
+                Content.Load<Texture2D>(Variables.snakeHeadUp), Content.Load<Texture2D>(Variables.snakeHeadDown),
+                Content.Load<Texture2D>(Variables.snakeHeadLeft), Content.Load<Texture2D>(Variables.snakeHeadRight)
+            );
+
+            GraphicsManager.Instance.loadSnakeBody(
+                Content.Load<Texture2D>(Variables.snakeBodyUp), Content.Load<Texture2D>(Variables.snakeBodyDown),
+                Content.Load<Texture2D>(Variables.snakeBodyLeft), Content.Load<Texture2D>(Variables.snakeBodyRight)
+            );
+
+            GraphicsManager.Instance.loadSnakeTail(
+                Content.Load<Texture2D>(Variables.snakeTailUp), Content.Load<Texture2D>(Variables.snakeTailDown),
+                Content.Load<Texture2D>(Variables.snakeTailLeft), Content.Load<Texture2D>(Variables.snakeTailRight)
+            );
+
             GraphicsManager.Instance.mouse = Mice.Instance.loadMice(Content.Load<Texture2D>(Variables.mouse));
 
             if(Variables.obstacleMode)

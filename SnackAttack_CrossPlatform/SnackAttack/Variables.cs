@@ -13,11 +13,6 @@ namespace SnackAttack.Desktop
         public static string timeUpMessage = "Time up! Press 'r' to Restart";
         public static string winMessage;
 
-        //content names
-        public static string snakeHead = "Snake_head";
-        public static string snakeBody = "Snake_body";
-        public static string snakeTail = "Snake_tail";
-
         public static string snakeHeadLeft = "Snake_head_left";
         public static string snakeHeadRight = "Snake_head_right";
         public static string snakeHeadUp = "Snake_head_up";
@@ -26,15 +21,12 @@ namespace SnackAttack.Desktop
         public static string snakeBodyLeft = "Snake_body_left";
         public static string snakeBodyRight = "Snake_body_right";
         public static string snakeBodyUp = "Snake_body_up";
-        public static string snakeBodyDown = "Snake_body_down";
+        public static string snakeBodyDown = "Snake_body_down"; 
 
         public static string snakeTailLeft = "Snake_tail_left";
         public static string snakeTailRight = "Snake_tail_right";
         public static string snakeTailUp = "Snake_tail_up";
         public static string snakeTailDown = "Snake_tail_down";
-
-
-
 
         public static string obstacle = "brick";
         public static string pause = "pause";
@@ -50,7 +42,7 @@ namespace SnackAttack.Desktop
 
         //snake constants
         public static float maxSpeed = 100f;
-        public static int maxLength = 50;
+        public static int maxLength = 10;
         public static int minLength = 2;
         public static int spacing = 25; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;
