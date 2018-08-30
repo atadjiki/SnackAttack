@@ -11,6 +11,8 @@ namespace SnackAttack.Desktop
         SpriteBatch spriteBatch;
         public SpriteFont font;
 
+        public Texture2D background;
+
         public Texture2D pause;
         public Texture2D mouse;
         public Texture2D obstacle;
@@ -156,13 +158,17 @@ namespace SnackAttack.Desktop
 
         public void drawStartUI()
         {
-
-
-
             spriteBatch.
                        DrawString(font, Variables.welcomeMessage,
                                    new Vector2(getPreferredWidth() / 2 - 100,
                                                getPreferredHeight() / 2 - 75), Color.White);
+        }
+
+        public void drawBackground(){
+
+            spriteBatch.Draw(background, new Vector2(getPreferredWidth()/2, getPreferredHeight()/2), null, Color.White, 0f,
+                             new Vector2(getPreferredWidth()/2, getPreferredHeight() / 2), Vector2.One, SpriteEffects.None, 0f);
+
         }
 
         public void drawPauseUI()
@@ -234,6 +240,8 @@ namespace SnackAttack.Desktop
 
             spriteBatch.Begin();
 
+            drawBackground();
+
             if (Game1.gameState == Game1.GameState.Start)
             {
                 drawStartUI();
@@ -241,7 +249,7 @@ namespace SnackAttack.Desktop
 
             if (Game1.gameState == Game1.GameState.Playing)
             {
-
+                
                 drawGameActors();
                 drawGameUI(timerText);
             }

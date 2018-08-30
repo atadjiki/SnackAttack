@@ -61,6 +61,7 @@ namespace SnackAttack
         {
 
             GraphicsManager.Instance.LoadContent();
+            GraphicsManager.Instance.background = Content.Load<Texture2D>(Variables.backgroundimage);
             GraphicsManager.Instance.font = Content.Load<SpriteFont>(Variables.timer);
             GraphicsManager.Instance.pause = Content.Load<Texture2D>(Variables.pause);
             GraphicsManager.Instance.pausePos = new Vector2(GraphicsManager.Instance.getPreferredWidth() - 100, GraphicsManager.Instance.getPreferredHeight() - 100);

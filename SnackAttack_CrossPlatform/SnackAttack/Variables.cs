@@ -8,6 +8,7 @@ namespace SnackAttack.Desktop
 
         public static Color backgroundColor = Color.CornflowerBlue;
 
+        public static string backgroundimage = "background";
 
         public static string welcomeMessage = "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n shift - shrink \n wasd - control head \n arrow keys - control tail";
         public static string timeUpMessage = "Time up! Press 'r' to Restart";
