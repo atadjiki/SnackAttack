@@ -32,6 +32,11 @@ namespace SnackAttack.Desktop
         public Texture2D tailUp;
         public Texture2D tailDown;
 
+        public Texture2D mouseLeft;
+        public Texture2D mouseRight;
+        public Texture2D mouseUp;
+        public Texture2D mouseDown;
+
         public enum Direction { left, right, up, down };
         public enum SnakePart { head, tail, body };
 
@@ -100,6 +105,14 @@ namespace SnackAttack.Desktop
 
         }
 
+        public void loadMouse(Texture2D up, Texture2D down, Texture2D left, Texture2D right){
+
+            mouseUp = up;
+            mouseDown = down;
+            mouseLeft = left;
+            mouseRight = right;
+        }
+
         public GraphicsDeviceManager GetGraphics(){
             return graphics;
         }
@@ -150,7 +163,7 @@ namespace SnackAttack.Desktop
         {
 
             Vector2 miceLocation = Mice.Instance.getMiceLocation();
-            Texture2D miceBody = Mice.Instance.getMiceBody();
+            Texture2D miceBody = GraphicsManager.instance.mouse;
 
             spriteBatch.Draw(miceBody, miceLocation, null, Color.White, 0f, new Vector2(miceBody.Width / 2, miceBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
 

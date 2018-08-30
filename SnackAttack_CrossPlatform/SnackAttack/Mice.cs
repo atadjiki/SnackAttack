@@ -158,55 +158,77 @@ namespace SnackAttack.Desktop
                     if (yPercent > 50) {
                         if (difference > 0) {
                             index = 2;
-                            if (previousIndex == 0) {
+                       
+                        if (previousIndex == 0) {
                                 index = 1;
+                          
                             }
                         } else if (difference < 0) {
                             if (previousIndex == 0) {
                                 index = 3;
-                            }
+                   
+                        }
                         }
                     } else {
                         index = 1;
+                 
                         difference -= 50;
                         if (difference > 0) {
                             if (previousIndex == 3) {
                                 index = 2;
-                            }
+                 
+                        }
                         } else if (difference < 0) {
                             if (previousIndex == 3) {
                                 index = 0;
-                            }
+                         
+                        }
                         }
                     }
                 } else {
                     if (yPercent > 50) {
                         index = 3;
+                      
                         difference += 50;
                         if (difference > 0) {
                             if (previousIndex == 1) {
                                 index = 2;
-                            }
+                
+                        }
                         } else if (difference < 0) {
                             if (previousIndex == 1) {
                                 index = 0;
-                            }
+                          
+                        }
                         }
                     } else {
                         index = 0;
-                        if (difference > 0) {
+
+                    if (difference > 0) {
                             if (previousIndex == 2) {
                                 index = 1;
-                            } else if(index == 1) {
+                      
+                        } else if(index == 1) {
                                 index = 2;
-                            }
+                        
+                        }
                         } else if (difference < 0) {
                             if (previousIndex == 2) {
                                 index = 3;
-                            }
+                          
+                        }
                         }
                     }
                 }
+            if(index == 0){
+                GraphicsManager.Instance.mouse = GraphicsManager.Instance.mouseDown;
+            } else if(index ==1){
+                GraphicsManager.Instance.mouse = GraphicsManager.Instance.mouseLeft;
+            } else if(index==2){
+                GraphicsManager.Instance.mouse = GraphicsManager.Instance.mouseUp;
+            } else if(index==3){
+                GraphicsManager.Instance.mouse = GraphicsManager.Instance.mouseRight;
+            }
             Console.WriteLine(index + ":::::::::::::::" + previousIndex);
             gotoLocation = micePointLocations[index];
         }
