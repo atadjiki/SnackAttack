@@ -43,8 +43,6 @@ namespace SnackAttack.Desktop
         public static bool obstacleMode = false;
         public static int time = 31000;
 
-
-
         //snake constants
         public static float maxSpeed = 100f;
         public static int maxLength = 40;
@@ -52,6 +50,12 @@ namespace SnackAttack.Desktop
         public static int spacing = 25; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;
         public static int slowdown = 5;
+
+
+        //game screen variables
+        public static bool fullScreen = true;
+        public static int screenWidth = 1920;
+        public static int screenHeight = 1080;
 
 
     }

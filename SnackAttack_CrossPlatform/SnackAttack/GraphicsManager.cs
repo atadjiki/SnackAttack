@@ -65,6 +65,13 @@ namespace SnackAttack.Desktop
 
         public void setGraphicsDeviceManager(GraphicsDeviceManager _graphics){
             graphics = _graphics;
+
+            if (Variables.fullScreen)
+                graphics.ToggleFullScreen();
+            else{
+                graphics.PreferredBackBufferWidth = Variables.screenWidth;
+                graphics.PreferredBackBufferHeight = Variables.screenHeight;
+            }
         }
 
         public void LoadContent(){
