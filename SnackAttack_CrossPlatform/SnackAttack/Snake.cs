@@ -26,6 +26,8 @@ namespace SnackAttack.Desktop
         bool tailMoving = false;
         bool shrinkMode = false;
 
+        int framesPassed = 0;
+
         float snakeSpeed = Variables.maxSpeed;
         int snakeLength = Variables.minLength;
 
@@ -57,9 +59,6 @@ namespace SnackAttack.Desktop
             previousDirections = new List<GraphicsManager.Direction>(Variables.minLength * Variables.spacing);
             snakeBoxes = new List<BoundingBox>();
 
-
-            //add and increment offsets in loop
-
             //initialize all node positions 
             for (int i = 0; i < Variables.minLength; i++)
             {
@@ -76,13 +75,19 @@ namespace SnackAttack.Desktop
             positions.Insert(positions.Count - 1, position);
             snakeBody.Insert(positions.Count - 2, GraphicsManager.Instance.bodyUp);
             snakeBoxes.Insert(positions.Count - 1, new BoundingBox());
-
-
         }
 
-        public void shrinkSnake()
+        public void shrinkSnake(GraphicsManager.Direction direction)
         {
-            positions.RemoveAt(positions.Count - 1);
+            if(positions.Count > Variables.minLength){
+
+                positions.RemoveAt(positions.Count-1);
+                snakeBody.RemoveAt(snakeBody.Count-1);
+                snakeBoxes.RemoveAt(snakeBoxes.Count-1);
+
+                snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(direction, GraphicsManager.SnakePart.tail);
+
+            }
 
         }
 
@@ -93,6 +98,8 @@ namespace SnackAttack.Desktop
 
         public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect)
         {
+
+
 
             //snakeBoxes[0] = Collision.UpdateBoundingBox(snakeBoxes[0], GraphicsManager.Instance.headAsset, positions[0]);
 
@@ -110,10 +117,10 @@ namespace SnackAttack.Desktop
                 if (!tailMoving)
                 {
 
-                    positions.Reverse();
-                    repopulatePreviousPositions();
-                    repopulatePreviousDirections();
-                    snakeBody.Reverse();
+                    //positions.Reverse();
+                    //repopulatePreviousPositions();
+                    //repopulatePreviousDirections();
+                    //snakeBody.Reverse();
                 }
 
 
@@ -126,17 +133,15 @@ namespace SnackAttack.Desktop
                 if (tailMoving)
                 {
 
-                    positions.Reverse();
-                    repopulatePreviousPositions();
-                    repopulatePreviousDirections();
-                    snakeBody.Reverse();
+                    //positions.Reverse();
+                    //repopulatePreviousPositions();
+                    //repopulatePreviousDirections();
+                    //snakeBody.Reverse();
                 }
 
                 tailMoving = false;
                 noKeyPressed = false;
             }
-
-
 
             if (noKeyPressed && shrinkMode == false)
                 return;
@@ -144,11 +149,9 @@ namespace SnackAttack.Desktop
             //dont change any positions if the snake isnt moving 
             else if (!noKeyPressed)
             {
-               
 
                 if ((tailMoving && allowTail) || (!tailMoving && allowHead))
                 {
-
 
                     //are we moving the head or the tail now?
                     var head = positions[0];
@@ -157,39 +160,60 @@ namespace SnackAttack.Desktop
                     var lastPreviousDirection = direction;
 
 
-
                     //move head or tail first
 
                     if (tailMoving)
                     {
+
                         if (kstate.IsKeyDown(Keys.Up))
                         {
-                            head.Y -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                            //head.Y -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                             direction = GraphicsManager.Direction.up;
-                            noKeyPressed = false;
                         }
 
                         else if (kstate.IsKeyDown(Keys.Down))
                         {
-                            head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                           // head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                             direction = GraphicsManager.Direction.down;
-                            noKeyPressed = false;
                         }
 
 
                         else if (kstate.IsKeyDown(Keys.Left))
                         {
-                            head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                            //head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                             direction = GraphicsManager.Direction.left;
-                            noKeyPressed = false;
                         }
 
                         else if (kstate.IsKeyDown(Keys.Right))
                         {
-                            head.X += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                           // head.X += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                             direction = GraphicsManager.Direction.right;
-                            noKeyPressed = false;
                         }
+
+
+                        if (framesPassed < 15)
+                        {
+                            framesPassed++;
+                            return;
+
+
+
+                        }else{
+
+                            framesPassed = 0;
+                            if (direction == lastPreviousDirection)
+                            {
+
+                                shrinkSnake(direction);
+                                return;
+                            }
+                        }
+
+
+
+
+
+               
 
                     }
 
@@ -271,6 +295,8 @@ namespace SnackAttack.Desktop
                     snakeBody[0] = GraphicsManager.Instance.getSnakeTexture(direction, GraphicsManager.SnakePart.head);
 
 
+
+
                     // loop through list, set positions for all nodes while incrementing positions
                     for (int i = 1; i < positions.Count; i++)
                     {
@@ -281,7 +307,7 @@ namespace SnackAttack.Desktop
                         if (previousPositions.Count != 0 && previousPositions.Count > i * Variables.spacing)
                         {
                             temp = previousPositions.ToArray()[i * Variables.spacing];
-                            
+
                         }
 
                         //store back in list
@@ -292,7 +318,7 @@ namespace SnackAttack.Desktop
                         if (previousDirections.Count != 0 && previousDirections.Count > i * Variables.spacing)
                         {
 
-                            if(i != positions.Count -1)
+                            if (i != positions.Count - 1)
                                 snakeBody[i] = GraphicsManager.Instance.getSnakeTexture(previousDirections.ToArray()[i * Variables.spacing],
                                                                                     GraphicsManager.SnakePart.body);
                             else if (i == positions.Count - 1)
@@ -303,26 +329,57 @@ namespace SnackAttack.Desktop
 
                         }
 
-                        
-                        
-
-
-
                     }
 
-                    //if there is room to grow, and the head has moved enough, increment snake 
-                    if (previousPositions.Count > Variables.spacing * positions.Count && positions.Count <= Variables.maxLength)
-                    {
-                        Vector2 position = positions[positions.Count - 1];
-                        growSnake(1, position);
-                        snakeLength++;
-                    }
+
+                    //if(checkSnakeCollisions() == false){
+
+                        //if there is room to grow, and the head has moved enough, increment snake 
+                        if (previousPositions.Count > Variables.spacing * positions.Count && positions.Count < Variables.maxLength)
+                        {
+                            Vector2 position = positions[positions.Count - 1];
+                            growSnake(1, position);
+                            snakeLength++;
+                        }
+               //     }
+
+                   
+
+
 
                 }
 
                 previousKB = kstate;
 
             }
+        }
+
+        public bool checkSnakeCollisions()
+        {
+            //if the head or tail touch a body node, delete it
+
+            if (positions.Count == 0 || positions == null) return false;
+
+            var head = positions[0];
+            var tail = positions[positions.Count - 1];
+
+            for (int i = 1; i < positions.Count - 1; i++)
+            {
+                var body = positions[i];
+
+                if (Vector2.Distance(tail, body) < (2* Variables.spacing/3))
+                {
+
+                        Console.WriteLine("Snake collided with itself at " + body.X + "," + body.Y);
+                        Console.WriteLine("Positions:" + positions.Count + ", Max Length:" + Variables.maxLength);
+                        
+                       // shrinkSnake();
+                        return true;
+
+                }
+            }
+
+            return false;
         }
 
         private void UpdateSnakeBoxes()
@@ -433,10 +490,13 @@ namespace SnackAttack.Desktop
                 if (previousDirections.Count != 0 && previousDirections.Count > i * Variables.spacing)
                 {
 
-                    if(i == snakeBody.Count-1){
+                    if (i == snakeBody.Count - 1)
+                    {
                         temp = GraphicsManager.Instance.getSnakeTexture(previousDirections.ToArray()[i * Variables.spacing],
                                                                         GraphicsManager.SnakePart.tail);
-                    } else{
+                    }
+                    else
+                    {
                         temp = GraphicsManager.Instance.getSnakeTexture(previousDirections.ToArray()[i * Variables.spacing],
                                                                         GraphicsManager.SnakePart.body);
                     }
@@ -476,6 +536,8 @@ namespace SnackAttack.Desktop
         {
             snakeBody.Add(asset);
         }
+
+
 
 
     }

@@ -152,8 +152,8 @@ namespace SnackAttack.Desktop
         /// <param name = "yPercent"> It is the integer percent value of snake head's Y-axis location with respect to the window size
         private void selectMouseLocation(int xPercent, int yPercent) {
             int difference = xPercent - yPercent;
-            Console.WriteLine("xPercent: " + xPercent + "YPercent: " + yPercent + " difference: " + difference + " Previous Index: " + previousIndex);
-            Console.WriteLine("Before changing" + index + ":::::::::::::::" + previousIndex);
+          //  Console.WriteLine("xPercent: " + xPercent + "YPercent: " + yPercent + " difference: " + difference + " Previous Index: " + previousIndex);
+         //   Console.WriteLine("Before changing" + index + ":::::::::::::::" + previousIndex);
             if (xPercent >= 50) {
                     if (yPercent > 50) {
                         if (difference > 0) {
@@ -229,7 +229,7 @@ namespace SnackAttack.Desktop
             } else if(index==3){
                 GraphicsManager.Instance.mouse = GraphicsManager.Instance.mouseRight;
             }
-            Console.WriteLine(index + ":::::::::::::::" + previousIndex);
+           // Console.WriteLine(index + ":::::::::::::::" + previousIndex);
             gotoLocation = micePointLocations[index];
         }
     }

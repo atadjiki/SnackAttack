@@ -211,7 +211,7 @@ namespace SnackAttack.Desktop
                                               getPreferredHeight() - (10 * getPreferredHeight() / 12)), Color.White);
 
             spriteBatch.
-                       DrawString(font, "Length: " + Snake.Instance.getSnakeDistance(),
+                       DrawString(font, "Length: " + Snake.Instance.getSnakeLength(),
                                    new Vector2(getPreferredWidth() - (11 * getPreferredWidth() / 12),
                                                getPreferredHeight() - (9 * getPreferredHeight() / 12)), Color.White);
         }
