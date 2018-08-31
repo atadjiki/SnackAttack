@@ -45,8 +45,8 @@ namespace SnackAttack.Desktop
 
         //snake constants
         public static float maxSpeed = 100f;
-        public static int maxLength = 5;
-        public static int minLength = 2;
+        public static int maxLength = 16;
+        public static int minLength = 4;
         public static int spacing = 25; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;
         public static int slowdown = 5;

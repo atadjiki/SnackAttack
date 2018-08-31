@@ -26,7 +26,8 @@ namespace SnackAttack.Desktop
         bool tailMoving = false;
         bool shrinkMode = false;
 
-        int framesPassed = 0;
+        int framesPassedTail = 0;
+        int framesPassedHead = 0;
 
         float snakeSpeed = Variables.maxSpeed;
         int snakeLength = Variables.minLength;
@@ -64,8 +65,15 @@ namespace SnackAttack.Desktop
             {
                 positions.Add(new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY()));
                 snakeBoxes.Add(new BoundingBox());
-
             }
+
+            //insert snake head
+            snakeBody.Add(GraphicsManager.Instance.headUp);
+            for (int i = 1; i < Variables.minLength-1; i++){
+                snakeBody.Add(GraphicsManager.Instance.bodyUp);
+            }
+            snakeBody.Add(GraphicsManager.Instance.tailUp);
+
         }
 
 
@@ -191,29 +199,25 @@ namespace SnackAttack.Desktop
                         }
 
 
-                        if (framesPassed < 15)
+                        if (framesPassedTail < 15)
                         {
-                            framesPassed++;
+                            framesPassedTail++;
                             return;
 
 
 
                         }else{
 
-                            framesPassed = 0;
+                            framesPassedTail = 0;
                             if (direction == lastPreviousDirection)
                             {
 
                                 shrinkSnake(direction);
-                                return;
+
                             }
+
+                            return;
                         }
-
-
-
-
-
-               
 
                     }
 
@@ -331,21 +335,29 @@ namespace SnackAttack.Desktop
 
                     }
 
-
                     //if(checkSnakeCollisions() == false){
 
-                        //if there is room to grow, and the head has moved enough, increment snake 
+                    //if there is room to grow, and the head has moved enough, increment snake 
+                    if (framesPassedHead < 15)
+                    {
+                        framesPassedHead++;
+ 
+                    }
+                    else
+                    {
+
+                        framesPassedHead = 0;
                         if (previousPositions.Count > Variables.spacing * positions.Count && positions.Count < Variables.maxLength)
                         {
                             Vector2 position = positions[positions.Count - 1];
                             growSnake(1, position);
                             snakeLength++;
                         }
+
+            
+                    }
+
                //     }
-
-                   
-
-
 
                 }
 
