@@ -18,7 +18,9 @@ namespace SnackAttack.Desktop
         float backHeight;
         Texture2D miceBody;
         public Vector2 miceLocation;
+        private List<Vector2> warpLocations;
         private List<Vector2> micePointLocations;
+        
         private int totalMicePoints;
         private float xOffset = 50f;
         private float yOffset = 50f;
@@ -58,9 +60,16 @@ namespace SnackAttack.Desktop
             micePointLocations = new List<Vector2>(totalMicePoints);
 
             micePointLocations.Add(new Vector2(backWidth - xOffset, backHeight - yOffset));
-            micePointLocations.Add(new Vector2(0f + xOffset, backHeight - yOffset));
-            micePointLocations.Add(new Vector2(0f + xOffset, 0f + yOffset));
-            micePointLocations.Add(new Vector2(backWidth - xOffset, 0f + yOffset));
+            micePointLocations.Add(new Vector2(xOffset, backHeight - yOffset));
+            micePointLocations.Add(new Vector2(xOffset, yOffset));
+            micePointLocations.Add(new Vector2(backWidth - xOffset, yOffset));
+
+            warpLocations = new List<Vector2>(totalMicePoints);
+
+            warpLocations.Add(new Vector2(backWidth - 150f, backHeight - 150f));
+            warpLocations.Add(new Vector2(150f, backHeight - 150f));
+            warpLocations.Add(new Vector2(150f, 150f));
+            warpLocations.Add(new Vector2(backWidth - 150f, 150f));
 
             miceLocation = micePointLocations[0];
             gotoLocation = micePointLocations[3];
@@ -69,13 +78,6 @@ namespace SnackAttack.Desktop
             mouseBox = new BoundingBox();
 
             mousePos = new Vector2(GraphicsManager.Instance.getInitialX() - 150, GraphicsManager.Instance.getInitialY() - 150);
-        }
-
-
-        public Texture2D loadMice(Texture2D head)
-        {
-            miceBody = head;
-            return miceBody;
         }
 
     /// <summary>
@@ -98,13 +100,11 @@ namespace SnackAttack.Desktop
                 
             if (miceLocation.X == gotoLocation.X && miceLocation.Y == gotoLocation.Y){
                 previousIndex = index;
-                selectMouseLocation(xPercent, yPercent);
+                index = selectMouseLocation(xPercent, yPercent);
             } else if(snakeMouseCollision) {
-                selectMouseLocation(xPercent, yPercent);
-                Console.WriteLine(index + ":::::::::::::::" + previousIndex);
-                index = previousIndex;
-                gotoLocation = micePointLocations[index];
+                index = previousIndex;    
             }
+            gotoLocation = micePointLocations[index];
                 if (miceLocation.X == gotoLocation.X)
                 {
                     x_direction = 0f;
@@ -141,16 +141,21 @@ namespace SnackAttack.Desktop
             return miceLocation;
         }
 
-        public Texture2D getMiceBody(){
-            return GraphicsManager.Instance.mouse;
+        public List<Vector2> getWarpLocation() {
+            return warpLocations;
         }
+
+        public int getMicePoints() {
+            return totalMicePoints;
+        }
+
 
         /// <summary>
         /// This function selects the position of mouse out of the all the fixed points defined
         /// </summary>
         /// <param name = "xPercent"> It is the integer percent value of snake head's X-axis location with respect to the window size
         /// <param name = "yPercent"> It is the integer percent value of snake head's Y-axis location with respect to the window size
-        private void selectMouseLocation(int xPercent, int yPercent) {
+        private int selectMouseLocation(int xPercent, int yPercent) {
             int difference = xPercent - yPercent;
           //  Console.WriteLine("xPercent: " + xPercent + "YPercent: " + yPercent + " difference: " + difference + " Previous Index: " + previousIndex);
          //   Console.WriteLine("Before changing" + index + ":::::::::::::::" + previousIndex);
@@ -230,7 +235,8 @@ namespace SnackAttack.Desktop
                 GraphicsManager.Instance.mouse = GraphicsManager.Instance.mouseRight;
             }
            // Console.WriteLine(index + ":::::::::::::::" + previousIndex);
-            gotoLocation = micePointLocations[index];
+            // gotoLocation = micePointLocations[index];
+            return index;
         }
     }
 

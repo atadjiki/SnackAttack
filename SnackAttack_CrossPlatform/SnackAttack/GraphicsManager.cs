@@ -40,7 +40,9 @@ namespace SnackAttack.Desktop
         public enum Direction { left, right, up, down };
         public enum SnakePart { head, tail, body };
 
-
+        public Texture2D warp;
+        public Texture2D powerUp;
+        public Texture2D powerDown;
 
 
         public Vector2 pausePos;
@@ -120,6 +122,15 @@ namespace SnackAttack.Desktop
             mouseRight = right;
         }
 
+        public void loadWarp(Texture2D warpHole) {
+            warp = warpHole;
+        }
+
+        public void loadPowers(Texture2D up, Texture2D down) {
+            powerUp = up;
+            powerDown = down;
+        }
+
         public GraphicsDeviceManager GetGraphics(){
             return graphics;
         }
@@ -174,6 +185,20 @@ namespace SnackAttack.Desktop
 
             spriteBatch.Draw(miceBody, miceLocation, null, Color.White, 0f, new Vector2(miceBody.Width / 2, miceBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
 
+        }
+
+        public void DrawWarp() {
+            List<Vector2> warpLocation = Mice.Instance.getWarpLocation();
+            Texture2D warpBody = GraphicsManager.Instance.warp;
+            int warpPoints = Mice.Instance.getMicePoints();
+            for (int i = 0; i < warpPoints; i++) {
+                spriteBatch.Draw(warpBody, warpLocation[i], null, Color.White, 0f, new Vector2(warpBody.Width / 2, warpBody.Height / 2), 0.7f, SpriteEffects.None, 0f);            
+            }
+        }
+
+
+        public void DrawPowers() {
+            
         }
 
         public void drawStartUI()
@@ -248,11 +273,11 @@ namespace SnackAttack.Desktop
             if (Variables.obstacleMode)
                 DrawObstacles();
 
-                DrawSnake();
+            DrawWarp();
 
-                DrawMice();
+            DrawSnake();
 
-
+            DrawMice();
         }
 
         internal void DrawContent(string timerText, TimeSpan timeSpan)

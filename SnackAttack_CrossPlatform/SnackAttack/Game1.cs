@@ -88,6 +88,10 @@ namespace SnackAttack
                 Content.Load<Texture2D>(Variables.mouseUp), Content.Load<Texture2D>(Variables.mouseDown),
                 Content.Load<Texture2D>(Variables.mouseLeft), Content.Load<Texture2D>(Variables.mouseRight));
 
+            GraphicsManager.Instance.loadWarp(Content.Load<Texture2D>(Variables.warp));
+
+            GraphicsManager.Instance.loadPowers(Content.Load<Texture2D>(Variables.powerUp), Content.Load<Texture2D>(Variables.powerDown));
+            
             if (Variables.obstacleMode)
                 GraphicsManager.Instance.obstacle = Content.Load<Texture2D>(Variables.obstacle);
 

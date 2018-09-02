@@ -38,6 +38,11 @@ namespace SnackAttack.Desktop
         public static string pause = "pause";
         public static string timer = "Timer";
 
+        public static string warp = "Warp";
+
+        public static string powerUp = "good_power_up";
+        public static string powerDown = "Bad_power_up";
+
 
         //game constants
         public static bool obstacleMode = false;
