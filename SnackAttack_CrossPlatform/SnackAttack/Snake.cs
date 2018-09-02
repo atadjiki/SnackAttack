@@ -34,6 +34,11 @@ namespace SnackAttack.Desktop
 
         private static Snake instance = null;
 
+        private Vector2 powerUpLocation;
+        private Vector2 powerDownLocation;
+
+        private static readonly Random rnd = new Random();
+
         public Snake()
         {
             Initialize();
@@ -74,6 +79,9 @@ namespace SnackAttack.Desktop
             }
             snakeBody.Add(GraphicsManager.Instance.tailUp);
 
+            setPowerUpLocation();
+            setPowerDownLocation();
+
         }
 
 
@@ -102,6 +110,25 @@ namespace SnackAttack.Desktop
         public Vector2 getHeadPosition()
         {
             return positions[0];
+        }
+
+        public Vector2 getPowerUpLocation() {
+            return powerUpLocation;
+        }
+
+        public void setPowerUpLocation() {
+            
+            powerUpLocation.X = (float) rnd.Next(50, Variables.screenWidth - 50);
+            powerUpLocation.Y = (float) rnd.Next(50, Variables.screenHeight - 50);
+        }
+
+        public Vector2 getPowerDownLocation() {
+            return powerDownLocation;
+        }
+
+        public void setPowerDownLocation() {
+            powerDownLocation.X = (float) rnd.Next(50, Variables.screenWidth - 50);
+            powerDownLocation.Y = (float) rnd.Next(50, Variables.screenHeight - 50);
         }
 
         public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect)

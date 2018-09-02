@@ -198,7 +198,12 @@ namespace SnackAttack.Desktop
 
 
         public void DrawPowers() {
-            
+            Vector2 up = Snake.Instance.getPowerUpLocation();
+            Vector2 down = Snake.Instance.getPowerDownLocation();
+            Texture2D upBody = GraphicsManager.Instance.powerUp;
+            Texture2D downBody = GraphicsManager.Instance.powerDown;
+            spriteBatch.Draw(upBody, up, null, Color.White, 0f, new Vector2(upBody.Width / 2, upBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(downBody, down, null, Color.White, 0f, new Vector2(downBody.Width / 2, downBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
         }
 
         public void drawStartUI()
@@ -274,6 +279,8 @@ namespace SnackAttack.Desktop
                 DrawObstacles();
 
             DrawWarp();
+
+            DrawPowers();
 
             DrawSnake();
 
