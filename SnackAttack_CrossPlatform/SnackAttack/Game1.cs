@@ -249,6 +249,7 @@ namespace SnackAttack
                     {
                         collision = true;
                         Console.WriteLine("Mouse collided with snake body at " + box.Max + ", " + box.Min);
+                        Mice.Instance.increamentCollision();
                         return collision;
                     }
                 }

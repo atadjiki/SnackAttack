@@ -33,6 +33,9 @@ namespace SnackAttack.Desktop
 
         private static Mice instance = null;
 
+        private bool gotoWarp = false;
+        private int numberOfCollision;
+
         private Mice()
         {
             Initialize();
@@ -56,6 +59,7 @@ namespace SnackAttack.Desktop
             backHeight = GraphicsManager.Instance.getPreferredHeight();
             miceSpeed = 210f;
             totalMicePoints = 4;
+            numberOfCollision = 0;
 
             micePointLocations = new List<Vector2>(totalMicePoints);
 
@@ -97,43 +101,58 @@ namespace SnackAttack.Desktop
             //selecting the direction where mouse should go
             int xPercent = (int)((Snake.Instance.getHeadPosition().X * 100) / backWidth);
             int yPercent = (int)((Snake.Instance.getHeadPosition().Y * 100) / backHeight);
-                
-            if (miceLocation.X == gotoLocation.X && miceLocation.Y == gotoLocation.Y){
-                previousIndex = index;
-                index = selectMouseLocation(xPercent, yPercent);
-            } else if(snakeMouseCollision) {
-                index = previousIndex;    
+
+            if(numberOfCollision > 2) {
+                gotoWarp = true;
             }
-            gotoLocation = micePointLocations[index];
-                if (miceLocation.X == gotoLocation.X)
-                {
-                    x_direction = 0f;
+                
+            if (gotoWarp) {
+                gotoLocation = warpLocations[previousIndex];
+                if (miceLocation.X == gotoLocation.X && miceLocation.Y == gotoLocation.Y) {
+                    gotoWarp = false;
+                    index = selectMouseLocation(xPercent, yPercent);
+                    miceLocation.X = warpLocations[index].X;
+                    miceLocation.Y = warpLocations[index].Y;
+                    gotoLocation = micePointLocations[index];
+                    numberOfCollision = 0;
                 }
-                else if (miceLocation.X > gotoLocation.X)
-                {
-                    x_direction = -1f;
+            } else {
+                if (miceLocation.X == gotoLocation.X && miceLocation.Y == gotoLocation.Y){
+                    previousIndex = index;
+                    index = selectMouseLocation(xPercent, yPercent);
+                } else if(snakeMouseCollision) {
+                    index = previousIndex;    
                 }
-                else
-                {
-                    x_direction = 1f;
-                }
+                gotoLocation = micePointLocations[index];
+            }    
+            if (miceLocation.X == gotoLocation.X)
+            {
+                x_direction = 0f;
+            }
+            else if (miceLocation.X > gotoLocation.X)
+            {
+                x_direction = -1f;
+            }
+            else
+            {
+                x_direction = 1f;
+            }
 
-                if (miceLocation.Y == gotoLocation.Y)
-                {
-                    y_direction = 0f;
-                }
-                else if (miceLocation.Y > gotoLocation.Y)
-                {
-                    y_direction = -1f;
-                }
-                else
-                {
-                    y_direction = 1f;
-                }
-                miceLocation.X += (float)Math.Round((miceSpeed * x_direction) * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                miceLocation.Y += (float)Math.Round((miceSpeed * y_direction) * (float)gameTime.ElapsedGameTime.TotalSeconds);
-                // Console.WriteLine(miceLocation.X + ":::::::" + miceLocation.Y);
-
+            if (miceLocation.Y == gotoLocation.Y)
+            {
+                y_direction = 0f;
+            }
+            else if (miceLocation.Y > gotoLocation.Y)
+            {
+                y_direction = -1f;
+            }
+            else
+            {
+                y_direction = 1f;
+            }
+            miceLocation.X += (float)Math.Round((miceSpeed * x_direction) * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            miceLocation.Y += (float)Math.Round((miceSpeed * y_direction) * (float)gameTime.ElapsedGameTime.TotalSeconds);
+            // Console.WriteLine(miceLocation.X + ":::::::" + miceLocation.Y);
             return miceLocation;
         }
 
@@ -147,6 +166,14 @@ namespace SnackAttack.Desktop
 
         public int getMicePoints() {
             return totalMicePoints;
+        }
+
+        public int getCollisionNumber(){
+            return numberOfCollision;
+        }
+
+        public void increamentCollision() {
+            numberOfCollision++;
         }
 
 
