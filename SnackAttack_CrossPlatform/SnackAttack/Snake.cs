@@ -20,7 +20,6 @@ namespace SnackAttack.Desktop
 
         KeyboardState previousKB;
 
-        // bool up = false, down = false, left = false, right = false;
         GraphicsManager.Direction direction;
         bool noKeyPressed = true;
         bool tailMoving = false;
@@ -33,9 +32,6 @@ namespace SnackAttack.Desktop
         int snakeLength = Variables.minLength;
 
         private static Snake instance = null;
-
-        private Vector2 powerUpLocation;
-        private Vector2 powerDownLocation;
 
         private static readonly Random rnd = new Random();
 
@@ -79,29 +75,33 @@ namespace SnackAttack.Desktop
             }
             snakeBody.Add(GraphicsManager.Instance.tailUp);
 
-            setPowerUpLocation();
-            setPowerDownLocation();
-
         }
 
 
         public void growSnake(int amount, Vector2 position)
         {
+            if(positions.Count <= Variables.maxLength){
+                for (int i = 0; i < amount; i++)
+                {
+                    positions.Insert(positions.Count - 1, position);
+                    snakeBody.Insert(positions.Count - 2, GraphicsManager.Instance.bodyUp);
+                    snakeBoxes.Insert(positions.Count - 1, new BoundingBox());
+                }
+            }
 
-            positions.Insert(positions.Count - 1, position);
-            snakeBody.Insert(positions.Count - 2, GraphicsManager.Instance.bodyUp);
-            snakeBoxes.Insert(positions.Count - 1, new BoundingBox());
         }
 
-        public void shrinkSnake(GraphicsManager.Direction direction)
+        public void shrinkSnake(int amount, GraphicsManager.Direction direction)
         {
-            if(positions.Count > Variables.minLength){
+            if(positions.Count >= Variables.minLength){
 
-                positions.RemoveAt(positions.Count-1);
-                snakeBody.RemoveAt(snakeBody.Count-1);
-                snakeBoxes.RemoveAt(snakeBoxes.Count-1);
+                for (int i = 0; i < amount; i++){
+                    positions.RemoveAt(positions.Count - 1);
+                    snakeBody.RemoveAt(snakeBody.Count - 1);
+                    snakeBoxes.RemoveAt(snakeBoxes.Count - 1);
 
-                snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(direction, GraphicsManager.SnakePart.tail);
+                    snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(direction, GraphicsManager.SnakePart.tail);
+                }
 
             }
 
@@ -112,26 +112,7 @@ namespace SnackAttack.Desktop
             return positions[0];
         }
 
-        public Vector2 getPowerUpLocation() {
-            return powerUpLocation;
-        }
-
-        public void setPowerUpLocation() {
-            
-            powerUpLocation.X = (float) rnd.Next(50, Variables.screenWidth - 50);
-            powerUpLocation.Y = (float) rnd.Next(50, Variables.screenHeight - 50);
-        }
-
-        public Vector2 getPowerDownLocation() {
-            return powerDownLocation;
-        }
-
-        public void setPowerDownLocation() {
-            powerDownLocation.X = (float) rnd.Next(50, Variables.screenWidth - 50);
-            powerDownLocation.Y = (float) rnd.Next(50, Variables.screenHeight - 50);
-        }
-
-        public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect)
+        public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect, bool powerUp, bool powerDown)
         {
 
 
@@ -139,6 +120,16 @@ namespace SnackAttack.Desktop
             //snakeBoxes[0] = Collision.UpdateBoundingBox(snakeBoxes[0], GraphicsManager.Instance.headAsset, positions[0]);
 
             UpdateSnakeBoxes();
+
+            //check pick up collisions
+            if(powerUp){
+                powerUpSnake();
+
+            } 
+            if(powerDown){
+                powerDownSnake();
+            }
+
 
             noKeyPressed = true;
 
@@ -239,7 +230,7 @@ namespace SnackAttack.Desktop
                             if (direction == lastPreviousDirection)
                             {
 
-                                shrinkSnake(direction);
+                                shrinkSnake(1, direction);
 
                             }
 
@@ -362,9 +353,6 @@ namespace SnackAttack.Desktop
 
                     }
 
-                    //if(checkSnakeCollisions() == false){
-
-                    //if there is room to grow, and the head has moved enough, increment snake 
                     if (framesPassedHead < 15)
                     {
                         framesPassedHead++;
@@ -550,6 +538,24 @@ namespace SnackAttack.Desktop
             }
         }
 
+        public void powerUpSnake(){
+
+            if(positions.Count > 0 && positions != null){
+                Vector2 position = positions[positions.Count - 1];
+                growSnake(Variables.powerUpModifier, position);
+            }
+
+        }
+
+        public void powerDownSnake(){
+
+            if (positions.Count > 0 && positions != null)
+            {
+                Vector2 position = positions[positions.Count - 1];
+                growSnake(Variables.powerDownModifier, position);
+            }
+        }
+
         public List<Texture2D> getSnakeBody()
         {
             return snakeBody;
@@ -575,11 +581,5 @@ namespace SnackAttack.Desktop
         {
             snakeBody.Add(asset);
         }
-
-
-
-
     }
-
-
 }

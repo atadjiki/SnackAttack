@@ -48,6 +48,7 @@ namespace SnackAttack
 
             Snake.Instance.Initialize();
             Mice.Instance.Initialize();
+            if(Variables.pickUpsMode) PickUps.Instance.Initialize();
             if (Variables.obstacleMode) Obstacles.Instance.Initialize();
 
             base.Initialize();
@@ -94,6 +95,12 @@ namespace SnackAttack
             
             if (Variables.obstacleMode)
                 GraphicsManager.Instance.obstacle = Content.Load<Texture2D>(Variables.obstacle);
+
+            if(Variables.pickUpsMode){
+                GraphicsManager.Instance.powerUp = Content.Load<Texture2D>(Variables.powerUp);
+                GraphicsManager.Instance.powerDown = Content.Load<Texture2D>(Variables.powerDown);
+            }
+
 
             contentLoaded = true;
 
@@ -159,6 +166,10 @@ namespace SnackAttack
                 Obstacles.Instance.UpdateObstacleBoxes(GraphicsManager.Instance.obstacle);
             }
 
+            if(Variables.pickUpsMode){
+                PickUps.Instance.UpdatePickUpBoxes(GraphicsManager.Instance.powerUp, GraphicsManager.Instance.powerDown);
+            }
+
             Mice.Instance.mouseBox = Collision.UpdateBoundingBox(Mice.Instance.mouseBox, GraphicsManager.Instance.mouse, Mice.Instance.mousePos);
 
             if (gameState != GameState.TimeUp)
@@ -168,16 +179,19 @@ namespace SnackAttack
                 winCondition();
                 bool snakeMouseCollision = miceSnakeCollision();
 
-                bool obstacleCollision;
+                bool obstacleCollision = false;;
+                bool powerUpCollision = false;
+                bool powerDownCollision = false;
 
                 if (Variables.obstacleMode)
                     obstacleCollision = Obstacles.Instance.checkCollision();
-                else{
-                    obstacleCollision = false;
+                else if(Variables.pickUpsMode){
+                    powerUpCollision = PickUps.Instance.checkPowerUpCollision();
+                    powerDownCollision = PickUps.Instance.checkPowerDownCollision();
                 }
-                  
 
-                Snake.Instance.UpdateSnakePositions(currentKB, gameTime, GraphicsManager.Instance.GetGraphics(), obstacleCollision); //update snake 
+                Snake.Instance.UpdateSnakePositions(currentKB, gameTime, 
+                                                    GraphicsManager.Instance.GetGraphics(), obstacleCollision, powerUpCollision, powerDownCollision); //update snake 
                 Mice.Instance.mousePos = Mice.Instance.UpdateMicePosition(gameTime, snakeMouseCollision);
                 snakeMouseCollision = false;
             }

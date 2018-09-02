@@ -198,12 +198,17 @@ namespace SnackAttack.Desktop
 
 
         public void DrawPowers() {
-            Vector2 up = Snake.Instance.getPowerUpLocation();
-            Vector2 down = Snake.Instance.getPowerDownLocation();
-            Texture2D upBody = GraphicsManager.Instance.powerUp;
-            Texture2D downBody = GraphicsManager.Instance.powerDown;
-            spriteBatch.Draw(upBody, up, null, Color.White, 0f, new Vector2(upBody.Width / 2, upBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(downBody, down, null, Color.White, 0f, new Vector2(downBody.Width / 2, downBody.Height / 2), 0.7f, SpriteEffects.None, 0f);
+
+            foreach(Vector2 up in PickUps.Instance.getPowerUpPositions()){
+            
+                spriteBatch.Draw(powerUp, up, null, Color.White, 0f, new Vector2(powerUp.Width / 2, powerUp.Height / 2), 0.7f, SpriteEffects.None, 0f);
+            }
+
+            foreach (Vector2 down in PickUps.Instance.getPowerDownPositions())
+            {
+
+                spriteBatch.Draw(powerDown, down, null, Color.White, 0f, new Vector2(powerDown.Width / 2, powerDown.Height / 2), 0.7f, SpriteEffects.None, 0f);
+            }
         }
 
         public void drawStartUI()

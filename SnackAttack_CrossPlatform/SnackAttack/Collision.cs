@@ -63,6 +63,27 @@ namespace SnackAttack.Desktop
             return collision;
         }
 
+        public static int CheckPickUpCollisions(List<BoundingBox> boxesA, List<Vector2> vectorsB, List<BoundingBox> boxesB)
+        {
+            int collidingIndex = -1;
+
+            for (int i = 0; i < vectorsB.Count; i++)
+            {
+                foreach (BoundingBox box in boxesA)
+                {
+
+                    if (doesIntersect(box, boxesB[i]))
+                    {
+
+                        return i;
+                    }
+                }
+
+            }
+
+            return collidingIndex;
+        }
+
         public static bool CheckMouseSnakeCollisions()
         {
 

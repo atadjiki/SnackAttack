@@ -46,7 +46,12 @@ namespace SnackAttack.Desktop
 
         //game constants
         public static bool obstacleMode = false;
+        public static bool pickUpsMode = true;
         public static int time = 31000;
+        public static int powerUpModifier = 10;
+        public static int powerDownModifier = 10;
+        public static int powerUpAmount = 3;
+        public static int powerDownAmount = 0;
 
         //snake constants
         public static float maxSpeed = 100f;
