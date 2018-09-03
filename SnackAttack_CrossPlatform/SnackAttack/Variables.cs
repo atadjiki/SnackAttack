@@ -19,6 +19,11 @@ namespace SnackAttack.Desktop
         public static string snakeHeadUp = "Snake_head_up";
         public static string snakeHeadDown = "Snake_head_down";
 
+        public static string snakeTongueUp = "snake_head_tongue_up";
+        public static string snakeTongueDown = "snake_head_tongue_down";
+        public static string snakeTongueLeft = "snake_head_tongue_left";
+        public static string snakeTongueRight = "snake_head_tongue_right";
+
         public static string snakeBodyLeft = "Snake_body_left";
         public static string snakeBodyRight = "Snake_body_right";
         public static string snakeBodyUp = "Snake_body_up";

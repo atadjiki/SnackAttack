@@ -74,6 +74,12 @@ namespace SnackAttack
                 Content.Load<Texture2D>(Variables.snakeHeadLeft), Content.Load<Texture2D>(Variables.snakeHeadRight)
             );
 
+            GraphicsManager.Instance.loadSnakeTongue(
+                Content.Load<Texture2D>(Variables.snakeTongueUp), Content.Load<Texture2D>(Variables.snakeTongueDown),
+                Content.Load<Texture2D>(Variables.snakeTongueLeft), Content.Load<Texture2D>(Variables.snakeTongueRight)
+
+            );
+
             GraphicsManager.Instance.loadSnakeBody(
                 Content.Load<Texture2D>(Variables.snakeBodyUp), Content.Load<Texture2D>(Variables.snakeBodyDown),
                 Content.Load<Texture2D>(Variables.snakeBodyLeft), Content.Load<Texture2D>(Variables.snakeBodyRight)
