@@ -84,15 +84,18 @@ namespace SnackAttack.Desktop
 
         public void growSnake(int amount, Vector2 position)
         {
-            if (positions.Count <= Variables.maxLength)
+
+            for (int i = 0; i < amount; i++)
             {
-                for (int i = 0; i < amount; i++)
+
+                if (positions.Count < Variables.maxLength)
                 {
                     positions.Insert(positions.Count - 1, position);
                     snakeBody.Insert(positions.Count - 2, GraphicsManager.Instance.bodyUp);
                     snakeBoxes.Insert(positions.Count - 1, new BoundingBox());
                     directions.Insert(positions.Count - 1, GraphicsManager.Direction.up);
-                }
+                    snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(direction, GraphicsManager.SnakePart.tail);
+                } 
             }
 
         }
@@ -101,10 +104,10 @@ namespace SnackAttack.Desktop
         {
 
 
-                for (int i = 0; i < amount; i++)
-                {
+            for (int i = 0; i < amount; i++)
+            {
 
-                if (positions.Count > 0 && positions.Count >= Variables.minLength)
+                if (positions.Count > 0 && positions.Count > Variables.minLength)
                 {
                     positions.RemoveAt(positions.Count - 1);
                     snakeBody.RemoveAt(snakeBody.Count - 1);
@@ -210,14 +213,14 @@ namespace SnackAttack.Desktop
 
                         else if (kstate.IsKeyDown(Keys.Down))
                         {
-                           // head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                            // head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                             direction = GraphicsManager.Direction.down;
                         }
 
 
                         else if (kstate.IsKeyDown(Keys.Left))
                         {
-                           // head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                            // head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
                             direction = GraphicsManager.Direction.left;
                         }
 
@@ -325,7 +328,7 @@ namespace SnackAttack.Desktop
 
                     ////set the correct orientation asset
                     snakeBody[0] = GraphicsManager.Instance.getSnakeTexture(directions[0], GraphicsManager.SnakePart.head);
-                    snakeBody[snakeBody.Count-1] = GraphicsManager.Instance.getSnakeTexture(directions[directions.Count-1], GraphicsManager.SnakePart.tail);
+                    snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(directions[directions.Count - 1], GraphicsManager.SnakePart.tail);
 
 
 
@@ -602,7 +605,8 @@ namespace SnackAttack.Desktop
             snakeBody.Add(asset);
         }
 
-        public List<GraphicsManager.Direction> GetDirections(){
+        public List<GraphicsManager.Direction> GetDirections()
+        {
             return directions;
         }
     }

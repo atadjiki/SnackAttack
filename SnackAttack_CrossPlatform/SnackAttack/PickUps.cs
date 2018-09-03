@@ -133,6 +133,14 @@ namespace SnackAttack.Desktop
             }
         }
 
+        public void checkReplenishPickUps(){
+
+            if(Variables.pickUpsRespawn){
+                if(powerUpPositions.Count == 0 && powerDownPositions.Count == 0)
+                    InitializePickUps();
+            }
+        }
+
         public List<Vector2> getPowerUpPositions()
         {
             return powerUpPositions;

@@ -188,6 +188,7 @@ namespace SnackAttack
                 else if(Variables.pickUpsMode){
                     powerUpCollision = PickUps.Instance.checkPowerUpCollision();
                     powerDownCollision = PickUps.Instance.checkPowerDownCollision();
+                    PickUps.Instance.checkReplenishPickUps();
                 }
 
                 Snake.Instance.UpdateSnakePositions(currentKB, gameTime, 
