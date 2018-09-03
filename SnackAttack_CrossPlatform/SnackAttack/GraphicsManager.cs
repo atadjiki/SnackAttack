@@ -150,13 +150,32 @@ namespace SnackAttack.Desktop
 
             List<Vector2> positions = Snake.Instance.getPositions();
             List<Texture2D> snakeBody = Snake.Instance.getSnakeBody();
+            List<Direction> directions = Snake.Instance.GetDirections();
 
-            for (int i = 0; i < positions.Count; i++)
+            //draw tail
+            spriteBatch.
+                       Draw(getSnakeTexture(directions[directions.Count - 1], SnakePart.tail), positions[positions.Count - 1], null, Color.White, 0f,
+                            new Vector2(snakeBody[snakeBody.Count - 1].Width / 2,
+                                        snakeBody[snakeBody.Count - 1].Height / 2), Vector2.One, SpriteEffects.None, 0f);
+
+            //draw body
+            for (int i = 1; i < positions.Count - 1; i++)
             {
-
                 spriteBatch.
-                Draw(snakeBody[i], positions[i], null, Color.White, 0f, new Vector2(snakeBody[i].Width / 2, snakeBody[i].Height / 2), Vector2.One, SpriteEffects.None, 0f);
+                           Draw(getSnakeTexture(directions[i], SnakePart.body), positions[i], null, Color.White, 0f,
+                     new Vector2(snakeBody[i].Width / 2,
+                                 snakeBody[i].Height / 2), Vector2.One, SpriteEffects.None, 0f);
             }
+
+            //draw snake head
+            spriteBatch.
+                       Draw(getSnakeTexture(directions[0], SnakePart.head), positions[0], null, Color.White, 0f, 
+                            new Vector2(snakeBody[0].Width / 2, 
+                                        snakeBody[0].Height / 2), Vector2.One, SpriteEffects.None, 0f);
+
+
+
+
 
         }
 

@@ -50,23 +50,23 @@ namespace SnackAttack.Desktop
         public static int time = 31000;
         public static int powerUpModifier = 10;
         public static int powerDownModifier = 10;
-        public static int powerUpAmount = 3;
+        public static int powerUpAmount = 0;
         public static int powerDownAmount = 0;
 
         //snake constants
         public static float maxSpeed = 100f;
-        public static int maxLength = 16;
+        public static int maxLength = 8;
         public static int minLength = 4;
         public static int spacing = 25; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;
         public static int slowdown = 5;
-
+        public static int shrinkEveryNFrames = 7;
+        public static int growEveryNFrames = 15;
 
         //game screen variables
         public static bool fullScreen = false;
         public static int screenWidth = 800;
         public static int screenHeight = 480;
-
 
     }
 }
