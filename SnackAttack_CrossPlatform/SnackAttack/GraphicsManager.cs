@@ -287,7 +287,7 @@ namespace SnackAttack.Desktop
 
 
 
-            Variables.winMessage = "You win! Time: " + (winTime.Seconds - timeSpan.Seconds).ToString() + " seconds. Press 'r' to Restart";
+            Variables.winMessage = "You win! Time: " + ((Variables.time/1000) - timeSpan.Seconds).ToString() + " seconds. Press 'r' to Restart";
 
             spriteBatch.
                        DrawString(font, Variables.winMessage,
