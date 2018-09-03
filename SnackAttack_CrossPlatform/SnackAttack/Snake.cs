@@ -99,10 +99,12 @@ namespace SnackAttack.Desktop
 
         public void shrinkSnake(int amount, GraphicsManager.Direction direction)
         {
-            if (positions.Count >= Variables.minLength)
-            {
+
 
                 for (int i = 0; i < amount; i++)
+                {
+
+                if (positions.Count > 0 && positions.Count >= Variables.minLength)
                 {
                     positions.RemoveAt(positions.Count - 1);
                     snakeBody.RemoveAt(snakeBody.Count - 1);
@@ -570,7 +572,7 @@ namespace SnackAttack.Desktop
             if (positions.Count > 0 && positions != null)
             {
                 Vector2 position = positions[positions.Count - 1];
-                growSnake(Variables.powerDownModifier, position);
+                shrinkSnake(Variables.powerDownModifier, GraphicsManager.Direction.up);
             }
         }
 

@@ -50,8 +50,8 @@ namespace SnackAttack.Desktop
         public static int time = 31000;
         public static int powerUpModifier = 10;
         public static int powerDownModifier = 10;
-        public static int powerUpAmount = 0;
-        public static int powerDownAmount = 0;
+        public static int powerUpAmount = 2;
+        public static int powerDownAmount = 4;
 
         //snake constants
         public static float maxSpeed = 100f;
