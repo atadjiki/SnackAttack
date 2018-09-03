@@ -44,6 +44,8 @@ namespace SnackAttack.Desktop
 
         public enum Direction { left, right, up, down };
         public enum SnakePart { head, tail, body };
+        public int tongueFramesPassed;
+        public bool switchTongue = false;
 
         public Texture2D warp;
         public Texture2D powerUp;
@@ -181,11 +183,30 @@ namespace SnackAttack.Desktop
                                  snakeBody[i].Height / 2), Vector2.One, SpriteEffects.None, 0f);
             }
 
-            //draw snake head
-            spriteBatch.
-                       Draw(getSnakeTexture(directions[0], SnakePart.head), positions[0], null, Color.White, 0f, 
-                            new Vector2(snakeBody[0].Width / 2, 
+            //animate head every n frames
+            if (tongueFramesPassed < Variables.tongueEveryNFrames)
+            {
+                tongueFramesPassed++;
+                //draw regular head
+                spriteBatch.
+                       Draw(getSnakeTexture(directions[0], SnakePart.head), positions[0], null, Color.White, 0f,
+                            new Vector2(snakeBody[0].Width / 2,
                                         snakeBody[0].Height / 2), Vector2.One, SpriteEffects.None, 0f);
+            }
+            else
+            {
+
+                tongueFramesPassed = 0;
+                switchTongue = !switchTongue;
+                //draw tongue texture
+                spriteBatch.
+                       Draw(getSnakeTexture(directions[0], SnakePart.head), positions[0], null, Color.White, 0f,
+                            new Vector2(snakeBody[0].Width / 2,
+                                        snakeBody[0].Height / 2), Vector2.One, SpriteEffects.None, 0f);
+
+            }
+          
+
 
 
 
@@ -378,60 +399,87 @@ namespace SnackAttack.Desktop
         public Texture2D getSnakeTexture(Direction direction, SnakePart part)
         {
             Texture2D result = null;
-            if(part == SnakePart.head){
-                if(direction == Direction.up){
-                    return headUp;
-                }
-                else if (direction == Direction.down)
-                {
-                    return headDown;
-                }
-                else if (direction == Direction.left)
-                {
-                    return headLeft;
-                }
-                else if (direction == Direction.right)
-                {
-                    return headRight;
-                }
-            } 
-            else if (part == SnakePart.body)
+            switch (part)
             {
-                if (direction == Direction.up)
-                {
-                    return bodyUp;
-                }
-                else if (direction == Direction.down)
-                {
-                    return bodyDown;
-                }
-                else if (direction == Direction.left)
-                {
-                    return bodyLeft;
-                }
-                else if (direction == Direction.right)
-                {
-                    return bodyRight;
-                }
-            }
-            else if (part == SnakePart.tail)
-            {
-                if (direction == Direction.up)
-                {
-                    return tailUp;
-                }
-                else if (direction == Direction.down)
-                {
-                    return tailDown;
-                }
-                else if (direction == Direction.left)
-                {
-                    return tailLeft;
-                }
-                else if (direction == Direction.right)
-                {
-                    return tailRight;
-                }
+                case SnakePart.head:
+                    if (switchTongue)
+                    {
+                        if (direction == Direction.up)
+                        {
+                            return tongueUp;
+                        }
+                        else if (direction == Direction.down)
+                        {
+                            return tongueDown;
+                        }
+                        else if (direction == Direction.left)
+                        {
+                            return tongueLeft;
+                        }
+                        else if (direction == Direction.right)
+                        {
+                            return tongueRight;
+                        }
+                    }
+                    else
+                    {
+                        if (direction == Direction.up)
+                        {
+                            return headUp;
+                        }
+                        else if (direction == Direction.down)
+                        {
+                            return headDown;
+                        }
+                        else if (direction == Direction.left)
+                        {
+                            return headLeft;
+                        }
+                        else if (direction == Direction.right)
+                        {
+                            return headRight;
+                        }
+                    }
+
+                    break;
+                case SnakePart.body:
+                    if (direction == Direction.up)
+                    {
+                        return bodyUp;
+                    }
+                    else if (direction == Direction.down)
+                    {
+                        return bodyDown;
+                    }
+                    else if (direction == Direction.left)
+                    {
+                        return bodyLeft;
+                    }
+                    else if (direction == Direction.right)
+                    {
+                        return bodyRight;
+                    }
+
+                    break;
+                case SnakePart.tail:
+                    if (direction == Direction.up)
+                    {
+                        return tailUp;
+                    }
+                    else if (direction == Direction.down)
+                    {
+                        return tailDown;
+                    }
+                    else if (direction == Direction.left)
+                    {
+                        return tailLeft;
+                    }
+                    else if (direction == Direction.right)
+                    {
+                        return tailRight;
+                    }
+
+                    break;
             }
 
             return null;

@@ -69,8 +69,11 @@ namespace SnackAttack.Desktop
         public static int spacing = 25; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;
         public static int slowdown = 5;
+
+        //animation constants
         public static int shrinkEveryNFrames = 15;
         public static int growEveryNFrames = 45;
+        public static int tongueEveryNFrames = 45;
 
         //game screen variables
         public static bool fullScreen = false;
