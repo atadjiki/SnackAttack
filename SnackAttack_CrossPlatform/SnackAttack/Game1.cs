@@ -20,7 +20,7 @@ namespace SnackAttack
         KeyboardState currentKB, previousKB;
 
 
-        public enum GameState{ Start, Playing, Paused, Won, TimeUp};
+        public enum GameState{ Start, Playing, Paused, Won, TimeUp, Loading};
         public static GameState gameState;
 
 
@@ -166,6 +166,10 @@ namespace SnackAttack
             if (!contentLoaded)
                 return;
 
+            if(gameState == GameState.Loading){
+                return;
+            }
+
             ManageTimer(gameTime);
 
             if(Variables.obstacleMode){
@@ -234,20 +238,15 @@ namespace SnackAttack
             if (gameState == GameState.Paused)
                 return;
             if (gameState == GameState.Won && currentKB.IsKeyDown(Keys.R)){
-                Initialize();
                 gameState = GameState.Start;
-                return;
             }
             if(gameState == GameState.Playing && currentKB.IsKeyDown(Keys.R)){
-                Initialize();
                 gameState = GameState.Start;
             }
             if (gameState == GameState.Paused && currentKB.IsKeyDown(Keys.R)){
-                Initialize();
                 gameState = GameState.Start;
             }
             if(gameState == GameState.TimeUp && currentKB.IsKeyDown(Keys.R)){
-                Initialize();
                 gameState = GameState.Start;
             }
         }
@@ -313,8 +312,10 @@ namespace SnackAttack
 
         private void startGame(){
 
-            gameState = GameState.Playing;
+            gameState = GameState.Loading;
             Initialize();
+            gameState = GameState.Playing;
+
         }
     }
 }

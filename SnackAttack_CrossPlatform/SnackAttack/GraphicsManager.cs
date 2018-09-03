@@ -331,6 +331,14 @@ namespace SnackAttack.Desktop
 
         }
 
+        public void drawLoadingScreen(){
+
+            spriteBatch.
+                       DrawString(font, "Loading",
+                                  new Vector2(getPreferredWidth() / 2 - 50,
+                                               getPreferredHeight() / 2), Color.White);
+        }
+
         public void drawGameActors()
         {
 
@@ -350,6 +358,12 @@ namespace SnackAttack.Desktop
         {
 
             spriteBatch.Begin();
+
+            if(Game1.gameState == Game1.GameState.Loading){
+
+                drawLoadingScreen();
+                return;
+            }
 
             drawBackground();
 
