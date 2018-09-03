@@ -22,6 +22,11 @@ namespace SnackAttack.Desktop
         public Texture2D headUp;
         public Texture2D headDown;
 
+        public Texture2D tongueUp;
+        public Texture2D tongueDown;
+        public Texture2D tongueLeft;
+        public Texture2D tongueRight;
+
         public Texture2D bodyLeft;
         public Texture2D bodyRight;
         public Texture2D bodyUp;
@@ -92,6 +97,15 @@ namespace SnackAttack.Desktop
             headRight = right;
 
             Snake.Instance.addToSnakeBody(up);
+        }
+
+        public void loadSnakeTongue(Texture2D up, Texture2D down, Texture2D left, Texture2D right)
+        {
+            //adding snake tongue sprites
+            tongueUp = up;
+            tongueDown = down;
+            tongueLeft = left;
+            tongueRight = right;
         }
 
         public void loadSnakeTail(Texture2D up, Texture2D down, Texture2D left, Texture2D right)
