@@ -91,6 +91,12 @@
 /processorParam:TextureFormat=Color
 /build:greenball.png
 
+#begin grow.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:grow.ogg
+
 #begin Mice.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -198,6 +204,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:redball.png
+
+#begin shrink.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:shrink.ogg
 
 #begin Snake_body.png
 /importer:TextureImporter
@@ -426,6 +438,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Snake_tail_up.png
+
+#begin success.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:success.ogg
 
 #begin Timer.spritefont
 /importer:FontDescriptionImporter

@@ -336,6 +336,14 @@ namespace SnackAttack.Desktop
                                                getPreferredHeight() / 2), Color.White);
         }
 
+        public void drawTutorial(){
+
+            spriteBatch.
+                       DrawString(font, Variables.tutorial,
+                                  new Vector2(getPreferredWidth() / 11 ,
+                                               getPreferredHeight() / 9), Color.White);
+        }
+
         public void drawGameActors()
         {
 
@@ -356,28 +364,34 @@ namespace SnackAttack.Desktop
 
             spriteBatch.Begin();
 
-            if(Game1.gameState == Game1.GameState.Loading){
 
-                drawLoadingScreen();
-                return;
+            if (Game1.gameState == Game1.GameState.Tutorial){
+
+                drawTutorial();
             }
 
-            drawBackground();
+            if(Game1.gameState == Game1.GameState.Loading){
+
+                drawBackground();
+                drawLoadingScreen();
+            }
 
             if (Game1.gameState == Game1.GameState.Start)
             {
+                drawBackground();
                 drawStartUI();
             }
 
             if (Game1.gameState == Game1.GameState.Playing)
             {
-                
+                drawBackground();
                 drawGameActors();
                 drawDebugUI(timerText);
             }
 
             if (Game1.gameState == Game1.GameState.Paused)
             {
+                drawBackground();
                 drawPauseUI();
                 drawGameActors();
                 drawDebugUI(timerText);
@@ -385,13 +399,15 @@ namespace SnackAttack.Desktop
 
             if (Game1.gameState == Game1.GameState.Won)
             {
-                drawGameActors();
+                // drawGameActors();
+                drawBackground();
                 drawWinUI(timeSpan);
             }
 
             if (Game1.gameState == Game1.GameState.TimeUp)
             {
-                drawGameActors();
+                //  drawGameActors();
+                drawBackground();
                 drawTimeUpUI();
             }
 

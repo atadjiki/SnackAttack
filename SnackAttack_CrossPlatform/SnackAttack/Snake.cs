@@ -214,6 +214,10 @@ namespace SnackAttack.Desktop
 
                     framesPassedTail = 0;
                     shrinkSnake(1, direction);
+                    if (Variables.audioOn && Variables.fxOn)
+                    {
+                        AudioManager.Instance.shrink.Play();
+                    }
 
                     return;
                 }
@@ -373,6 +377,10 @@ namespace SnackAttack.Desktop
                             Vector2 position = positions[positions.Count - 1];
                             growSnake(position);
                             snakeLength++;
+                            if (Variables.audioOn && Variables.fxOn)
+                            {
+                                AudioManager.Instance.grow.Play();
+                            }
                         }
 
 

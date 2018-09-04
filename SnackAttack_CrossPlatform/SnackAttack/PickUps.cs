@@ -52,22 +52,41 @@ namespace SnackAttack.Desktop
             Random rnd = new Random();
 
             for (int i = 0; i < Variables.powerUpAmount; i++){
-                Vector2 powerUpLocation = new Vector2();
 
-                powerUpLocation.X = (float)rnd.Next(50, Variables.screenWidth - 50);
-                powerUpLocation.Y = (float)rnd.Next(50, Variables.screenHeight - 50);
+                bool validLocation = false;
 
-                powerUpPositions.Add(powerUpLocation);
+                while (!validLocation){
+                    Vector2 powerUpLocation = new Vector2();
+
+                    powerUpLocation.X = (float)rnd.Next(50, Variables.screenWidth - 50);
+                    powerUpLocation.Y = (float)rnd.Next(50, Variables.screenHeight - 50);
+
+                    if (Vector2.Distance(powerUpLocation, Snake.Instance.getHeadPosition()) > 50)
+                    {
+                        powerUpPositions.Add(powerUpLocation);
+                        validLocation = true;
+                    }
+                }      
             }
 
             for (int i = 0; i < Variables.powerDownAmount; i++)
             {
-                Vector2 powerDownLocation = new Vector2();
- 
-                powerDownLocation.X = (float)rnd.Next(50, Variables.screenWidth - 50);
-                powerDownLocation.Y = (float)rnd.Next(50, Variables.screenHeight - 50);
 
-                powerDownPositions.Add(powerDownLocation);
+                bool validLocation = false;
+
+                while (!validLocation)
+                {
+                    Vector2 powerDownLocation = new Vector2();
+
+                    powerDownLocation.X = (float)rnd.Next(50, Variables.screenWidth - 50);
+                    powerDownLocation.Y = (float)rnd.Next(50, Variables.screenHeight - 50);
+
+                    if (Vector2.Distance(powerDownLocation, Snake.Instance.getHeadPosition()) > 50)
+                    {
+                        powerDownPositions.Add(powerDownLocation);
+                        validLocation = true;
+                    }
+                }
             }
 
 

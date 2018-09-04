@@ -22,7 +22,7 @@ namespace SnackAttack
         KeyboardState currentKB, previousKB;
 
 
-        public enum GameState{ Start, Playing, Paused, Won, TimeUp, Loading};
+        public enum GameState{ Start, Playing, Paused, Won, TimeUp, Loading, Tutorial};
         public static GameState gameState;
 
 
@@ -33,7 +33,7 @@ namespace SnackAttack
 
             GraphicsManager.Instance.setGraphicsDeviceManager(new GraphicsDeviceManager(this));
             Content.RootDirectory = "Content";
-            gameState = GameState.Start;
+            gameState = GameState.Tutorial;
 
         }
 
@@ -52,6 +52,7 @@ namespace SnackAttack
             Mice.Instance.Initialize();
             if(Variables.pickUpsMode) PickUps.Instance.Initialize();
             if (Variables.obstacleMode) Obstacles.Instance.Initialize();
+            Variables.maxLength = Variables.startingMaxLength;
 
             base.Initialize();
         }
@@ -65,7 +66,10 @@ namespace SnackAttack
 
 
             if(Variables.audioOn){
-                AudioManager.Instance.LoadSoundEffects(Content.Load<SoundEffect>(Variables.powerUpFX), Content.Load<SoundEffect>(Variables.powerDownFX), Content.Load<SoundEffect>(Variables.warpFX));
+                AudioManager.Instance.LoadSoundEffects(Content.Load<SoundEffect>(Variables.powerUpFX), Content.Load<SoundEffect>(Variables.powerDownFX), 
+                                                       Content.Load<SoundEffect>(Variables.warpFX), Content.Load<SoundEffect>(Variables.growFX), 
+                                                                                 Content.Load<SoundEffect>(Variables.shrinkFX), 
+                                                       Content.Load<SoundEffect>(Variables.successFX), Content.Load<SoundEffect>(Variables.failureFX));
 
                 if(Variables.musicOn){
                     AudioManager.Instance.LoadMusic(Content.Load<Song>(Variables.backgroundMusic));
@@ -73,7 +77,6 @@ namespace SnackAttack
                 }
 
             }
-
 
             GraphicsManager.Instance.LoadContent();
             GraphicsManager.Instance.background = Content.Load<Texture2D>(Variables.backgroundimage);
@@ -144,9 +147,10 @@ namespace SnackAttack
         protected override void Update(GameTime gameTime)
         {
 
-
-
-            if (gameState == GameState.Start)
+            if(gameState == GameState.Tutorial){
+                handleInputs();
+            }
+            else if (gameState == GameState.Start)
             {
                 handleStartMenuInputs();
             }
@@ -243,6 +247,11 @@ namespace SnackAttack
 
             currentKB = Keyboard.GetState();
 
+            if(gameState == GameState.Tutorial && currentKB.IsKeyDown(Keys.Enter)){
+                gameState = GameState.Start;
+            }
+
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || currentKB.IsKeyDown(Keys.Escape))
                 Exit();
             if (currentKB.IsKeyUp(Keys.P) && previousKB.IsKeyDown(Keys.P) && gameState == GameState.Paused)
@@ -269,6 +278,9 @@ namespace SnackAttack
 
             if(Collision.doesIntersect(Mice.Instance.mouseBox, Snake.Instance.getHeadBox())){
                 gameState = GameState.Won;
+                if(Variables.audioOn && Variables.fxOn){
+                    AudioManager.Instance.success.Play();
+                }
             }
         }
 
@@ -319,6 +331,10 @@ namespace SnackAttack
 
             {
                 gameState = GameState.TimeUp;
+                if (Variables.audioOn && Variables.fxOn)
+                {
+                    AudioManager.Instance.failure.Play();
+                }
 
             }
 

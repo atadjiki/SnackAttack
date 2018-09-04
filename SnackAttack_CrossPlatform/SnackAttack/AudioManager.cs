@@ -10,6 +10,12 @@ namespace SnackAttack.Desktop
         public SoundEffect powerUp;
         public SoundEffect powerDown;
         public SoundEffect warp;
+        public SoundEffect pop;
+        public SoundEffect success;
+        public SoundEffect failure;
+        public SoundEffect grow;
+        public SoundEffect shrink;
+
         public Song backgroundMusic;
 
 
@@ -35,10 +41,16 @@ namespace SnackAttack.Desktop
             backgroundMusic = _backgroundMusic;
         }
 
-        public void LoadSoundEffects(SoundEffect _powerUp, SoundEffect _powerDown, SoundEffect _warp){
+        public void LoadSoundEffects(SoundEffect _powerUp, SoundEffect _powerDown, 
+                                     SoundEffect _warp, SoundEffect _grow, 
+                                     SoundEffect _shrink, SoundEffect _success, SoundEffect _failure){
             powerUp = _powerUp;
             powerDown = _powerDown;
             warp = _warp;
+            grow = _grow;
+            shrink = _shrink;
+            success = _success;
+            failure = _failure;
         }
 
         public void playPowerUp(){
