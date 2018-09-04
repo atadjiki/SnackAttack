@@ -72,23 +72,21 @@ namespace SnackAttack.Desktop
         public static string powerUp = "good_power_up";
         public static string powerDown = "Bad_power_up";
 
-
         //game constants
         public static bool obstacleMode = false;
-        public static int time = 31000; 
-
+        public static int time = 61000; 
 
         //powerup constants
         public static bool pickUpsMode = true;
         public static bool pickUpsRespawn = true;
-        public static int powerUpModifier = 10; //how much we will increase the snake
-        public static int powerDownModifier = 10; //how much the snake will shrink if it can 
-        public static int powerUpAmount = 3; //the number of power ups created
-        public static int powerUpBonus = 4;
-        public static int powerDownAmount = 6; //the number of power down objects created
+        public static int powerUpModifier = 16; //how much we will increase the snake
+        public static int powerDownModifier = 8; //how much the snake will shrink if it can 
+        public static int powerUpAmount = 10; //the number of power ups created
+        public static int powerUpBonus = 16;
+        public static int powerDownAmount = 15; //the number of power down objects created
 
         //snake constants
-        public static float maxSpeed = 100f;
+        public static float maxSpeed = 110f;
         public static int maxLength = 8;
         public static int startingMaxLength = 8;
         public static int minLength = 3;
@@ -103,8 +101,8 @@ namespace SnackAttack.Desktop
 
         //game screen variables
         public static bool fullScreen = false;
-        public static int screenWidth = 800; //1920  800 1440 
-        public static int screenHeight = 480; //1080 480 900
+        public static int screenWidth = 1440; //1920  800 1440 
+        public static int screenHeight = 800; //1080 480 900
 
         public static bool audioOn = true;
         public static bool fxOn = true;
