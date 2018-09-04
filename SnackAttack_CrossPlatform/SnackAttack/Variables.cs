@@ -81,16 +81,16 @@ namespace SnackAttack.Desktop
         public static bool pickUpsRespawn = true;
         public static int powerUpModifier = 16; //how much we will increase the snake
         public static int powerDownModifier = 8; //how much the snake will shrink if it can 
-        public static int powerUpAmount = 10; //the number of power ups created
+        public static int powerUpAmount = 4; //the number of power ups created
         public static int powerUpBonus = 16;
-        public static int powerDownAmount = 15; //the number of power down objects created
+        public static int powerDownAmount = 4; //the number of power down objects created
 
         //snake constants
-        public static float maxSpeed = 110f;
+        public static float maxSpeed = 130f;
         public static int maxLength = 8;
         public static int startingMaxLength = 8;
         public static int minLength = 3;
-        public static int spacing = 25; //track every nth head positions (0 will look really mushed)
+        public static int spacing = 20; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;
         public static int slowdown = 5;
 
