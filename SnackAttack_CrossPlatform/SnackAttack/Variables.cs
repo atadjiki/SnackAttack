@@ -102,7 +102,7 @@ namespace SnackAttack.Desktop
         //game screen variables
         public static bool fullScreen = false;
         public static int screenWidth = 1440; //1920  800 1440 
-        public static int screenHeight = 800; //1080 480 900
+        public static int screenHeight = 900; //1080 480 900
 
         public static bool audioOn = true;
         public static bool fxOn = true;
