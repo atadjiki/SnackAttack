@@ -8,8 +8,11 @@ namespace SnackAttack.Desktop
 
         public static Color backgroundColor = Color.CornflowerBlue;
 
+        public static bool DebugMode = true;
+
         public static string backgroundimage = "background";
 
+        //note - make sure all fx are in .ogg or .mp3 format
         public static string backgroundMusic = "backgroundmusic";
         public static string warpFX = "warpFX";
         public static string powerUpFX = "powerUpFX";
@@ -18,6 +21,8 @@ namespace SnackAttack.Desktop
         public static string welcomeMessage = "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n \n wasd - control head \n arrow keys - control tail";
         public static string timeUpMessage = "Time up! Press 'r' to Restart";
         public static string winMessage;
+
+        //note - currently all textures are sized at 64x64 pixels
 
         public static string snakeHeadLeft = "Snake_head_left";
         public static string snakeHeadRight = "Snake_head_right";
@@ -56,20 +61,21 @@ namespace SnackAttack.Desktop
 
         //game constants
         public static bool obstacleMode = false;
-        public static int time = 31000;
+        public static int time = 31000; 
 
 
         //powerup constants
         public static bool pickUpsMode = true;
         public static bool pickUpsRespawn = true;
-        public static int powerUpModifier = 10;
-        public static int powerDownModifier = 10;
-        public static int powerUpAmount = 3;
-        public static int powerDownAmount = 4;
+        public static int powerUpModifier = 10; //how much we will increase the snake
+        public static int powerDownModifier = 10; //how much the snake will shrink if it can 
+        public static int powerUpAmount = 3; //the number of power ups created
+        public static int powerUpBonus = 5;
+        public static int powerDownAmount = 4; //the number of power down objects created
 
         //snake constants
         public static float maxSpeed = 100f;
-        public static int maxLength = 8;
+        public static int maxLength = 16;
         public static int minLength = 4;
         public static int spacing = 25; //track every nth head positions (0 will look really mushed)
         public static int collisionModifier = 50;
@@ -82,10 +88,10 @@ namespace SnackAttack.Desktop
 
         //game screen variables
         public static bool fullScreen = false;
-        public static int screenWidth = 800;
-        public static int screenHeight = 480;
+        public static int screenWidth = 800; //1920  800 1440 
+        public static int screenHeight = 480; //1080 480 900
 
-        public static bool audioOn = true;
+        public static bool audioOn = false;
         public static bool fxOn = true;
         public static bool musicOn = true;
 

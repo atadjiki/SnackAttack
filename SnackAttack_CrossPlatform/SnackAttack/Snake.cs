@@ -24,7 +24,7 @@ namespace SnackAttack.Desktop
         GraphicsManager.Direction direction;
         bool noKeyPressed = true;
         bool tailMoving = false;
-        bool shrinkMode = false;
+
 
         int framesPassedTail = 0;
         int framesPassedHead = 0;
@@ -85,6 +85,13 @@ namespace SnackAttack.Desktop
         public void growSnake(int amount, Vector2 position)
         {
 
+            if(positions.Count + amount > Variables.maxLength)
+            {
+                Variables.maxLength += Variables.powerUpBonus;
+                return;
+            }
+
+
             for (int i = 0; i < amount; i++)
             {
 
@@ -96,7 +103,24 @@ namespace SnackAttack.Desktop
                     directions.Insert(positions.Count - 1, GraphicsManager.Direction.up);
                     snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(direction, GraphicsManager.SnakePart.tail);
                 } 
+
             }
+
+        }
+
+        public void growSnake(Vector2 position)
+        {
+
+            if (positions.Count < Variables.maxLength)
+            {
+                positions.Insert(positions.Count - 1, position);
+                snakeBody.Insert(positions.Count - 2, GraphicsManager.Instance.bodyUp);
+                snakeBoxes.Insert(positions.Count - 1, new BoundingBox());
+                directions.Insert(positions.Count - 1, GraphicsManager.Direction.up);
+                snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(direction, GraphicsManager.SnakePart.tail);
+            }
+
+
 
         }
 
@@ -151,45 +175,54 @@ namespace SnackAttack.Desktop
 
             bool allowTail = true;
             bool allowHead = true;
-
-            if (kstate.IsKeyDown(Keys.Up) || kstate.IsKeyDown(Keys.Down) || kstate.IsKeyDown(Keys.Left) || kstate.IsKeyDown(Keys.Right))
-            {
-
-                //if moving tail, reverse the previousposition queue if switching from front of snake
-                if (!tailMoving)
-                {
-
-                    //positions.Reverse();
-                    //repopulatePreviousPositions();
-                    //repopulatePreviousDirections();
-                    //snakeBody.Reverse();
-                }
+            bool shrinkMode = false;
 
 
-                tailMoving = true;
+            if (kstate.IsKeyDown(Keys.LeftShift) && previousKB.IsKeyDown(Keys.LeftShift)){
+
+                shrinkMode = true;
                 noKeyPressed = false;
+
             }
             else if (kstate.IsKeyDown(Keys.W) || kstate.IsKeyDown(Keys.S) || kstate.IsKeyDown(Keys.A) || kstate.IsKeyDown(Keys.D))
             {
-
-                if (tailMoving)
-                {
-
-                    //positions.Reverse();
-                    //repopulatePreviousPositions();
-                    //repopulatePreviousDirections();
-                    //snakeBody.Reverse();
-                }
 
                 tailMoving = false;
                 noKeyPressed = false;
             }
 
-            if (noKeyPressed && shrinkMode == false)
+            if (noKeyPressed == true)
                 return;
 
+
+            if(positions.Count >= Variables.maxLength){
+                allowHead = false;
+                allowTail = false;
+
+            }
+
+            if (shrinkMode)
+            {
+
+                if (framesPassedTail < Variables.shrinkEveryNFrames)
+                {
+                    framesPassedTail++;
+                    return;
+                }
+                else
+                {
+
+                    framesPassedTail = 0;
+                    shrinkSnake(1, direction);
+
+                    return;
+                }
+
+            }
+
+
             //dont change any positions if the snake isnt moving 
-            else if (!noKeyPressed)
+            if (!noKeyPressed)
             {
 
                 if ((tailMoving && allowTail) || (!tailMoving && allowHead))
@@ -203,59 +236,7 @@ namespace SnackAttack.Desktop
 
 
                     //move head or tail first
-
-                    if (tailMoving)
-                    {
-
-
-                        if (kstate.IsKeyDown(Keys.Up))
-                        {
-                            //head.Y -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                            direction = GraphicsManager.Direction.up;
-
-                        }
-
-                        else if (kstate.IsKeyDown(Keys.Down))
-                        {
-                            // head.Y += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                            direction = GraphicsManager.Direction.down;
-                        }
-
-
-                        else if (kstate.IsKeyDown(Keys.Left))
-                        {
-                            // head.X -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                            direction = GraphicsManager.Direction.left;
-                        }
-
-                        else if (kstate.IsKeyDown(Keys.Right))
-                        {
-                            //head.X += snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                            direction = GraphicsManager.Direction.right;
-                        }
-
-                        if (directions.Count > 2 && direction == directions[directions.Count - 2])
-                        {
-                            if (framesPassedTail < Variables.shrinkEveryNFrames)
-                            {
-                                framesPassedTail++;
-                                return;
-                            }
-                            else
-                            {
-
-                                framesPassedTail = 0;
-                                if (direction == lastPreviousDirection)
-                                {
-                                    shrinkSnake(1, direction);
-                                }
-
-                                return;
-                            }
-                        }
-                    }
-
-                    else if (!tailMoving)
+                    if (!tailMoving)
                     {
 
                         if (kstate.IsKeyDown(Keys.W))
@@ -390,7 +371,7 @@ namespace SnackAttack.Desktop
                         if (previousPositions.Count > Variables.spacing * positions.Count && positions.Count < Variables.maxLength)
                         {
                             Vector2 position = positions[positions.Count - 1];
-                            growSnake(1, position);
+                            growSnake(position);
                             snakeLength++;
                         }
 

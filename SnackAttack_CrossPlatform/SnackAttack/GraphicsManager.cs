@@ -205,12 +205,6 @@ namespace SnackAttack.Desktop
                                         snakeBody[0].Height / 2), Vector2.One, SpriteEffects.None, 0f);
 
             }
-          
-
-
-
-
-
 
         }
 
@@ -287,22 +281,25 @@ namespace SnackAttack.Desktop
                                 new Vector2(pause.Width / 2, pause.Height / 2), Vector2.One, SpriteEffects.None, 0f);
         }
 
-        public void drawGameUI(String timerText)
+        public void drawDebugUI(String timerText)
         {
-            spriteBatch.
+            if(Variables.DebugMode){
+                spriteBatch.
                        DrawString(font, timerText,
                                    new Vector2(getPreferredWidth() - (11 * getPreferredWidth() / 12),
                                                getPreferredHeight() - (11 * getPreferredHeight() / 12)), Color.White);
 
-            spriteBatch.
-                       DrawString(font, "Speed: " + Snake.Instance.getSpeed(),
-                                  new Vector2(getPreferredWidth() - (11 * getPreferredWidth() / 12),
-                                              getPreferredHeight() - (10 * getPreferredHeight() / 12)), Color.White);
+                spriteBatch.
+                           DrawString(font, "Speed: " + Snake.Instance.getSpeed(),
+                                      new Vector2(getPreferredWidth() - (11 * getPreferredWidth() / 12),
+                                                  getPreferredHeight() - (10 * getPreferredHeight() / 12)), Color.White);
 
-            spriteBatch.
-                       DrawString(font, "Length: " + Snake.Instance.getSnakeLength() + "\n\nMax Length: " + Variables.maxLength ,
-                                   new Vector2(getPreferredWidth() - (11 * getPreferredWidth() / 12),
-                                               getPreferredHeight() - (9 * getPreferredHeight() / 12)), Color.White);
+                spriteBatch.
+                           DrawString(font, "Length: " + Snake.Instance.getSnakeLength() + "\n\nMax Length: " + Variables.maxLength,
+                                       new Vector2(getPreferredWidth() - (11 * getPreferredWidth() / 12),
+                                                   getPreferredHeight() - (9 * getPreferredHeight() / 12)), Color.White);
+            }
+
         }
 
         public void drawTimeUpUI()
@@ -376,14 +373,14 @@ namespace SnackAttack.Desktop
             {
                 
                 drawGameActors();
-                drawGameUI(timerText);
+                drawDebugUI(timerText);
             }
 
             if (Game1.gameState == Game1.GameState.Paused)
             {
                 drawPauseUI();
                 drawGameActors();
-                drawGameUI(timerText);
+                drawDebugUI(timerText);
             }
 
             if (Game1.gameState == Game1.GameState.Won)
