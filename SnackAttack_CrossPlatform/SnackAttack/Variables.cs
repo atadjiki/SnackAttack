@@ -10,6 +10,11 @@ namespace SnackAttack.Desktop
 
         public static string backgroundimage = "background";
 
+        public static string backgroundMusic = "backgroundmusic";
+        public static string warpFX = "warpFX";
+        public static string powerUpFX = "powerUpFX";
+        public static string powerDownFX = "powerDownFX";
+
         public static string welcomeMessage = "Welcome to Snake! \n\n Press Enter to Begin \n\n Controls: \n r - restart \n \n wasd - control head \n arrow keys - control tail";
         public static string timeUpMessage = "Time up! Press 'r' to Restart";
         public static string winMessage;
@@ -79,6 +84,10 @@ namespace SnackAttack.Desktop
         public static bool fullScreen = false;
         public static int screenWidth = 800;
         public static int screenHeight = 480;
+
+        public static bool audioOn = true;
+        public static bool fxOn = true;
+        public static bool musicOn = true;
 
     }
 }

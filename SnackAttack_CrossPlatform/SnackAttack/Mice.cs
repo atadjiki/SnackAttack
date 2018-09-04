@@ -115,6 +115,8 @@ namespace SnackAttack.Desktop
                     miceLocation.Y = warpLocations[index].Y;
                     gotoLocation = micePointLocations[index];
                     numberOfCollision = 0;
+                    if (Variables.fxOn && Variables.audioOn)
+                        AudioManager.Instance.playPowerWarp();
                 }
             } else {
                 if (miceLocation.X == gotoLocation.X && miceLocation.Y == gotoLocation.Y){

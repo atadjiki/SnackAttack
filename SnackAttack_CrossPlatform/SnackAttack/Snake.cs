@@ -134,11 +134,15 @@ namespace SnackAttack.Desktop
             //check pick up collisions
             if (powerUp)
             {
+                if(Variables.fxOn && Variables.audioOn)
+                    AudioManager.Instance.playPowerUp();
                 powerUpSnake();
 
             }
             if (powerDown)
             {
+                if (Variables.fxOn && Variables.audioOn)
+                    AudioManager.Instance.playPowerDown();
                 powerDownSnake();
             }
 

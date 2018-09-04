@@ -6,6 +6,8 @@ using Microsoft.CSharp;
 using System;
 using System.Collections.Generic;
 using SnackAttack.Desktop;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Media;
 
 namespace SnackAttack
 {
@@ -60,6 +62,18 @@ namespace SnackAttack
         /// </summary>
         protected override void LoadContent()
         {
+
+
+            if(Variables.audioOn){
+                AudioManager.Instance.LoadSoundEffects(Content.Load<SoundEffect>(Variables.powerUpFX), Content.Load<SoundEffect>(Variables.powerDownFX), Content.Load<SoundEffect>(Variables.warpFX));
+
+                if(Variables.musicOn){
+                    AudioManager.Instance.LoadMusic(Content.Load<Song>(Variables.backgroundMusic));
+                    AudioManager.Instance.playMusic();
+                }
+
+            }
+
 
             GraphicsManager.Instance.LoadContent();
             GraphicsManager.Instance.background = Content.Load<Texture2D>(Variables.backgroundimage);
