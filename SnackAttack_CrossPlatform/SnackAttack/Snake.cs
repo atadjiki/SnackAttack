@@ -178,7 +178,7 @@ namespace SnackAttack.Desktop
             bool shrinkMode = false;
 
 
-            if (kstate.IsKeyDown(Keys.LeftShift) && previousKB.IsKeyDown(Keys.LeftShift)){
+            if (kstate.IsKeyDown(Keys.LeftShift)){
 
                 shrinkMode = true;
                 noKeyPressed = false;
@@ -195,7 +195,7 @@ namespace SnackAttack.Desktop
                 return;
 
 
-            if(positions.Count >= Variables.maxLength){
+            if(positions.Count == Variables.maxLength){
                 allowHead = false;
                 allowTail = false;
 

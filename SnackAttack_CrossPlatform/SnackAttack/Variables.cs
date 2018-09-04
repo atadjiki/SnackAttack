@@ -84,8 +84,8 @@ namespace SnackAttack.Desktop
         public static int powerUpModifier = 10; //how much we will increase the snake
         public static int powerDownModifier = 10; //how much the snake will shrink if it can 
         public static int powerUpAmount = 3; //the number of power ups created
-        public static int powerUpBonus = 5;
-        public static int powerDownAmount = 10; //the number of power down objects created
+        public static int powerUpBonus = 4;
+        public static int powerDownAmount = 6; //the number of power down objects created
 
         //snake constants
         public static float maxSpeed = 100f;
