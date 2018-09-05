@@ -188,6 +188,7 @@ namespace SnackAttack
                 return;
             }
 
+            //check time
             ManageTimer(gameTime);
 
             if(Variables.obstacleMode){
@@ -276,6 +277,7 @@ namespace SnackAttack
 
         public void winCondition(){
 
+            //if the snake head collides with mouse, the game is won
             if(Collision.doesIntersect(Mice.Instance.mouseBox, Snake.Instance.getHeadBox())){
                 gameState = GameState.Won;
                 if(Variables.audioOn && Variables.fxOn){
@@ -340,6 +342,7 @@ namespace SnackAttack
 
         }
 
+        //remember to reinitialize all the game variables before starting again 
         private void startGame(){
 
             gameState = GameState.Loading;

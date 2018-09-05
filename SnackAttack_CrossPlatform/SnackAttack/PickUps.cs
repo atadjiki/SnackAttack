@@ -5,6 +5,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnackAttack.Desktop
 {
+    /*
+     * A class for initializing and managing the powerups that spawn on the screen.
+     * Powerups are randomly generated and placed. 
+     * Can be controlled through the Variables class. 
+     */ 
     public class PickUps
     {
 
@@ -55,6 +60,7 @@ namespace SnackAttack.Desktop
 
                 bool validLocation = false;
 
+                //check that the snake isnt already at this location
                 while (!validLocation){
                     Vector2 powerUpLocation = new Vector2();
 
@@ -103,6 +109,9 @@ namespace SnackAttack.Desktop
 
         }
 
+        //draw new collision boxes for all the pickups
+        // at the moment they dont move, but if they do we would need this
+
         public void UpdatePickUpBoxes(Texture2D powerUp, Texture2D powerDown)
         {
             //powerups
@@ -121,6 +130,7 @@ namespace SnackAttack.Desktop
 
         }
 
+        //check to see if the snake has collided with the powerup, if so, remove it from the game
         public bool checkPowerUpCollision()
         {
             int result = Collision.CheckPickUpCollisions(Snake.Instance.getSnakeBoxes(), powerUpPositions, powerUpBoxes);
@@ -152,6 +162,7 @@ namespace SnackAttack.Desktop
             }
         }
 
+        //if all powerups are gone, and the bool is true, respawn them
         public void checkReplenishPickUps(){
 
             if(Variables.pickUpsRespawn){

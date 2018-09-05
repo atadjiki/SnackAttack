@@ -74,24 +74,24 @@ namespace SnackAttack.Desktop
 
         //game constants
         public static bool obstacleMode = false;
-        public static int time = 61000; 
+        public static int time = 61000; //any more than this and we need to switch to seconds
 
         //powerup constants
-        public static bool pickUpsMode = true;
-        public static bool pickUpsRespawn = true;
+        public static bool pickUpsMode = true; 
+        public static bool pickUpsRespawn = true; //respawn if player catches all pickups
         public static int powerUpModifier = 16; //how much we will increase the snake
         public static int powerDownModifier = 8; //how much the snake will shrink if it can 
         public static int powerUpAmount = 4; //the number of power ups created
-        public static int powerUpBonus = 16;
+        public static int powerUpBonus = 16; //if the player overflows their length, how much do we add to max length
         public static int powerDownAmount = 4; //the number of power down objects created
 
         //snake constants
         public static float maxSpeed = 130f;
-        public static int maxLength = 8;
+        public static int maxLength = 8; 
         public static int startingMaxLength = 8;
         public static int minLength = 3;
         public static int spacing = 20; //track every nth head positions (0 will look really mushed)
-        public static int collisionModifier = 50;
+        public static int collisionModifier = 50; //how much snake is pushed back 
         public static int slowdown = 5;
 
         //animation constants
@@ -102,7 +102,7 @@ namespace SnackAttack.Desktop
         //game screen variables
         public static bool fullScreen = false;
         public static int screenWidth = 1440; //1920  800 1440 
-        public static int screenHeight = 900; //1080 480 900
+        public static int screenHeight = 800; //1080 480 900
 
         public static bool audioOn = true;
         public static bool fxOn = true;

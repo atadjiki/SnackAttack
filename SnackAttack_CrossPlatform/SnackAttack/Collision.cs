@@ -7,6 +7,8 @@ namespace SnackAttack.Desktop
 {
     public static class Collision
     {
+
+        //returns true if the two bounding boxes' rectangles intersect
         public static bool doesIntersect(BoundingBox a, BoundingBox b)
         {
 
@@ -17,6 +19,7 @@ namespace SnackAttack.Desktop
 
         }
 
+        //draws a new box based on the size and position 
         public static BoundingBox UpdateBoundingBox(BoundingBox box, Texture2D texture, Vector2 pos)
         {
             box.Min.X = pos.X;
@@ -27,6 +30,7 @@ namespace SnackAttack.Desktop
             return box;
         }
 
+        //checks to see if box collides with any of boxesB at positions vectorsB
         public static bool CheckCollisions(BoundingBox box, List<Vector2> vectorsB, List<BoundingBox> boxesB)
         {
             bool collision = false;
@@ -43,6 +47,7 @@ namespace SnackAttack.Desktop
             return collision;
         }
 
+        //like the previous method but checks two lists with each other
         public static bool CheckCollisions(List<BoundingBox> boxesA, List<Vector2> vectorsB, List<BoundingBox> boxesB)
         {
             bool collision = false;

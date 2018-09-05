@@ -5,6 +5,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnackAttack.Desktop
 {
+
+    /*
+     * This class is no longer in use, but manages and initializes obstacles
+     * that are placed in the game world. 
+     * If obstacles is turned on in Variables, this will create the decided obstacles
+     * and update their collision boxes. The snake cannot cross these but the mouse can. 
+     * 
+     */
     public class Obstacles
     {
 

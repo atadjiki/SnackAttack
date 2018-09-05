@@ -5,6 +5,10 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace SnackAttack.Desktop
 {
+    /*
+     * This class handles all drawing and contains copies of all the textures we need.
+     * 
+     */
     public class GraphicsManager
     {
         GraphicsDeviceManager graphics;
@@ -17,6 +21,7 @@ namespace SnackAttack.Desktop
         public Texture2D mouse;
         public Texture2D obstacle;
 
+        //snake textures
         public Texture2D headLeft;
         public Texture2D headRight;
         public Texture2D headUp;
@@ -37,6 +42,7 @@ namespace SnackAttack.Desktop
         public Texture2D tailUp;
         public Texture2D tailDown;
 
+        //mouse textures
         public Texture2D mouseLeft;
         public Texture2D mouseRight;
         public Texture2D mouseUp;
@@ -423,6 +429,7 @@ namespace SnackAttack.Desktop
             return getPreferredHeight() / 2;
         }
 
+        //fetches the correct snake texture based on the designated direction and part
         public Texture2D getSnakeTexture(Direction direction, SnakePart part)
         {
             Texture2D result = null;

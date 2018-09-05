@@ -10,14 +10,13 @@ namespace SnackAttack.Desktop
     {
 
 
-        List<Vector2> previousPositions;
-        List<GraphicsManager.Direction> previousDirections;
-
-        List<Vector2> positions;
+        List<Vector2> previousPositions; //where the snake head has been
+        List<GraphicsManager.Direction> previousDirections; //previous texture directions
+        List<Vector2> positions; //the current positions of the snake body nodes
         List<GraphicsManager.Direction> directions;
-        List<Texture2D> snakeBody;
+        List<Texture2D> snakeBody; 
 
-        List<BoundingBox> snakeBoxes;
+        List<BoundingBox> snakeBoxes; //collision boxes for snake
 
         KeyboardState previousKB;
 
@@ -26,10 +25,10 @@ namespace SnackAttack.Desktop
         bool tailMoving = false;
 
 
-        int framesPassedTail = 0;
+        int framesPassedTail = 0; //for animations
         int framesPassedHead = 0;
 
-        float snakeSpeed = Variables.maxSpeed;
+        float snakeSpeed = Variables.maxSpeed; 
         int snakeLength = Variables.minLength;
 
         private static Snake instance = null;
@@ -81,7 +80,9 @@ namespace SnackAttack.Desktop
 
         }
 
-
+        //used for colliding with a powerup, 
+        //will either add nodes to the snake, or if there is spillover
+        //increase the max length
         public void growSnake(int amount, Vector2 position)
         {
 
@@ -108,6 +109,7 @@ namespace SnackAttack.Desktop
 
         }
 
+        //simply inserts a single node into the snake
         public void growSnake(Vector2 position)
         {
 
@@ -124,6 +126,8 @@ namespace SnackAttack.Desktop
 
         }
 
+
+        //removes nodes from the snake
         public void shrinkSnake(int amount, GraphicsManager.Direction direction)
         {
 
@@ -152,7 +156,7 @@ namespace SnackAttack.Desktop
         public void UpdateSnakePositions(KeyboardState kstate, GameTime gameTime, GraphicsDeviceManager graphics, bool doesIntersect, bool powerUp, bool powerDown)
         {
 
-
+            //redraw all collision boxes
             UpdateSnakeBoxes();
 
             //check pick up collisions
@@ -201,6 +205,7 @@ namespace SnackAttack.Desktop
 
             }
 
+            //if player is holding shift, shrink a node every n frames
             if (shrinkMode)
             {
 
@@ -243,6 +248,7 @@ namespace SnackAttack.Desktop
                     if (!tailMoving)
                     {
 
+                        //apply movement 
                         if (kstate.IsKeyDown(Keys.W))
                         {
                             head.Y -= snakeSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -272,7 +278,7 @@ namespace SnackAttack.Desktop
                         }
                     }
 
-
+                    //record the head's movement 
                     previousPositions.Insert(0, lastPreviousPosition);
                     previousDirections.Insert(0, lastPreviousDirection);
 
@@ -281,6 +287,7 @@ namespace SnackAttack.Desktop
                     head.Y = Math.Min(Math.Max(GraphicsManager.Instance.headUp.Height / 2, head.Y), graphics.PreferredBackBufferHeight - GraphicsManager.Instance.headUp.Height / 2);
 
                     //check collision, if this move is allowed, store the position - if not, stay where we are!
+                    //now that we dont use obstacles anymore this if statement is obsolete 
                     if (doesIntersect)
                     {
                         snakeSpeed = snakeSpeed / Variables.slowdown;
@@ -306,23 +313,19 @@ namespace SnackAttack.Desktop
                         }
                     }
 
+                    //if the snake has slowed down, it gradually gets back to its max speed
                     if (snakeSpeed < Variables.maxSpeed)
                     {
                         snakeSpeed++;
                     }
 
-
+                    //save the new head and direction variables
                     positions[0] = head;
                     directions[0] = direction;
 
                     ////set the correct orientation asset
                     snakeBody[0] = GraphicsManager.Instance.getSnakeTexture(directions[0], GraphicsManager.SnakePart.head);
                     snakeBody[snakeBody.Count - 1] = GraphicsManager.Instance.getSnakeTexture(directions[directions.Count - 1], GraphicsManager.SnakePart.tail);
-
-
-
-
-
 
                     // loop through list, set positions for all nodes while incrementing positions
                     for (int i = 1; i < positions.Count; i++)
@@ -343,7 +346,6 @@ namespace SnackAttack.Desktop
 
 
                         //update texture
-
                         if (previousDirections.Count != 0 && previousDirections.Count > i * Variables.spacing)
                         {
 
@@ -363,6 +365,7 @@ namespace SnackAttack.Desktop
 
                     }
 
+                    //if the snake is not at max length, add a new node every n frames
                     if (framesPassedHead < Variables.growEveryNFrames)
                     {
                         framesPassedHead++;
@@ -389,15 +392,16 @@ namespace SnackAttack.Desktop
 
                 }
 
+                //save the keyboard state so we can tell if keys can being held down etc
                 previousKB = kstate;
 
             }
         }
 
+        //no longer using this method 
         public bool checkSnakeCollisions()
         {
             //if the head or tail touch a body node, delete it
-
             if (positions.Count == 0 || positions == null) return false;
 
             var head = positions[0];
@@ -422,6 +426,7 @@ namespace SnackAttack.Desktop
             return false;
         }
 
+        //redraws the collision boxes for all snake nodes based on their textures
         private void UpdateSnakeBoxes()
         {
             for (int i = 0; i < snakeBoxes.Count; i++)
@@ -449,16 +454,21 @@ namespace SnackAttack.Desktop
             return snakeSpeed;
         }
 
+
+        //this is a physical length between the head and tail node
         public float getSnakeDistance()
         {
             return Vector2.Distance(positions[0], positions[positions.Count - 1]);
         }
 
+        //this is a distance in terms of nodes
         public int getSnakeLength()
         {
             return positions.Count;
         }
 
+
+        //this measures the snake's physical distance. we no longer use this method
         public bool checkDistance(Vector2 head, Vector2 tail)
         {
 
@@ -486,6 +496,8 @@ namespace SnackAttack.Desktop
             return Vector2.Distance(positions[0], positions[positions.Count - 1]);
         }
 
+        //this was for when we enabled bi-directional movement and flipped the snake 
+        //simply reverses the previous positions and throws away extra indexes
         private void repopulatePreviousPositions()
         {
 
@@ -550,6 +562,7 @@ namespace SnackAttack.Desktop
 
             }
         }
+
 
         public void powerUpSnake()
         {
